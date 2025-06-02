@@ -30,6 +30,30 @@ def update_status(new_status):
         
 init_status_file()
 
+import os
+
+STATUS_FILE = "status.txt"
+
+
+# 파일이 없으면 기본 Y로 생성
+def init_status_file():
+    if not os.path.exists(STATUS_FILE):
+        with open(STATUS_FILE, "w") as f:
+            f.write("N")
+            
+
+# 상태 읽기 (Y/N)
+def read_status():
+    with open(STATUS_FILE, "r") as f:
+        return f.read().strip()
+    
+# 상태 갱신
+def update_status(new_status):
+    with open(STATUS_FILE, "w") as f:
+        f.write(new_status)
+        
+init_status_file()
+
 
 def enum_windows_by_class_and_title(class_name, title):
     hwnds = []
@@ -220,6 +244,53 @@ coords = {
     ]
 }
 
+coords = {
+    "메뉴": (923, 43),
+    "드레그시작": (472,263),
+    "드레그끝": (763,252),
+    "메뉴-캐릭터변경": (798,364),
+    "1번": (838, 79),
+    "2번": (840, 152),
+    "3번": (831, 197),
+    "4번": (834, 262),
+    "5번": (845, 321),
+    "게임시작": (851, 499),
+    "팝업확인": (518, 331),
+    "마을귀환": (30, 187),
+    "순간이동": (378, 494),
+    "은총의 순간이동":(424,495),
+    "은총첫번쨰사냥터": (199, 173),
+    "자동사냥": (904,430),
+    "메뉴-던전": (761, 258),
+    "정예던전": (166, 77),
+    "정예던전스크롤위치": (315,183),
+    "공허의유적": (401, 296),
+    "공허의유적5단계": (135,239),
+    "난쟁이비밀통로": (614,270),
+    "난쟁이비밀통로5단계": (101,243),
+    "던전이동": (855,499),
+    "던전이동확인팝업": (514,332),
+    "장비창": (881, 43),
+    "모두해제버튼": (899, 510),
+    "창고바로가기": (752, 491),
+    "창고보관버튼": (881,508),
+    "창고꺼내기버튼": (170,506),
+    "자동장착": (902,511),
+    "인벤토리아이템": [
+        (730, 125), (778, 125), (823, 125), (869, 125), (920, 125),
+        (730, 174), (778, 174), (823, 174), (869, 174), (920, 174),
+        (730, 217), (778, 217), (823, 217), (869, 217), (920, 217),
+        (730, 267), (778, 267), (823, 267), (869, 267), (920, 267),
+    ],
+    "창고아이템": [
+        (39, 160), (87, 160), (140, 160), (176, 160),
+        (45, 212), (94, 212), (133, 212), (185, 212),
+        (34, 257), (94, 257), (133, 257), (185, 257),
+        (34, 308), (94, 308), (133, 308), (185, 308),
+        (34, 351), (94, 351), (133, 351), (185, 351),
+    ]
+}
+
 # region = (960, 0, 960, 540)
 # coords = {
 #     "드레그시작": (1432,263),
@@ -329,7 +400,19 @@ def get_sorted_odin_windows():
 
 odin_windows = get_sorted_odin_windows()
 
+def get_window_rect(hwnd):
+    rect = win32gui.GetWindowRect(hwnd)
+    return rect  # (left, top, right, bottom)
+def get_sorted_odin_windows():
+    odin_windows = enum_windows_by_class_and_title("UnrealWindow", "ODIN  ")
+    odin_windows = sorted(odin_windows, key=lambda hwnd: get_window_rect(hwnd)[0])  # 좌측 기준 정렬
+    return odin_windows
+
+odin_windows = get_sorted_odin_windows()
+
 if len(odin_windows) >= 2:
+    move_resize_window(odin_windows[0], 0, 0, 960, 540)# 왼쪽
+    move_resize_window(odin_windows[1], 960, 0, 960, 540)# 오른쪽
     move_resize_window(odin_windows[0], 0, 0, 960, 540)# 왼쪽
     move_resize_window(odin_windows[1], 960, 0, 960, 540)# 오른쪽
     print("ODIN 창 위치 조정 완료")
@@ -358,6 +441,13 @@ def main():
                 update_status('Y')
                 break
             time.sleep(1)
+        # 매크로 실행 루프
+        while True:
+            status = read_status()
+            if status == "N":
+                update_status('Y')
+                break
+            time.sleep(1)
         move_to_character_select_screen()
         move_to_character_slot(current_char_index)
         while isNext:
@@ -367,6 +457,7 @@ def main():
                     while has_dungeon_time():
                         enter_dungeon_and_auto_hunt()
                         update_status('N')
+                        update_status('N')
                         while not is_out_of_dungeon():
                             wait(60)
                         continue  # 던전 끝나면 다시 3.1로 돌아감
@@ -375,9 +466,11 @@ def main():
                     open_storage()
                     if retrieve_and_equip_equipment():
                         continue  # 다시 3.1로
+                        continue  # 다시 3.1로
                     else:
                         #아이템 없음 찾기실패 매크로 종료
                         print("아이템 찾기 실패 매크로 종료")
+                        update_status('N')
                         update_status('N')
                         isFine = False
                         break
@@ -392,6 +485,7 @@ def main():
                 else:
                     if current_char_index < MAX_CHARACTERS:
                         isNext = False
+                        update_status('N')
                         update_status('N')
                         continue  # 다음 캐릭터로 (3.2.2.1)
                     else:
@@ -411,6 +505,7 @@ def main():
 # === 기능 구현 자리 (좌표 기반 구현 필요) ===
 def wake_up_if_sleep_mode():
     if(image_exists_at_region('./images/절전모드.png', region)):
+        mouse_drag(*coords["드레그시작"], *coords["드레그끝"])
         mouse_drag(*coords["드레그시작"], *coords["드레그끝"])
     pass
 
@@ -535,6 +630,7 @@ def retrieve_and_equip_equipment():
     for pos in coords["창고아이템"]:
         pyautogui.click(*pos)
         time.sleep(0.1)
+        time.sleep(0.1)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
@@ -542,8 +638,10 @@ def retrieve_and_equip_equipment():
     click(coords["자동장착"])
     time.sleep(1)
     if(image_exists_at_region('./images/장비 미장착확인1.png', region)):
+    if(image_exists_at_region('./images/장비 미장착확인1.png', region)):
         click(coords["메뉴"])
         return False
+    if(image_exists_at_region('./images/장비 미장착확인2.png', region)):
     if(image_exists_at_region('./images/장비 미장착확인2.png', region)):
         click(coords["메뉴"])
         return False
@@ -563,6 +661,7 @@ def store_equipment():
     for pos in coords["인벤토리아이템"]:
         pyautogui.click(*pos)
         time.sleep(0.1)
+        time.sleep(0.1)
     time.sleep(1)
     click(coords["창고보관버튼"])
     click(coords["메뉴"])
@@ -570,6 +669,7 @@ def store_equipment():
 def retrieve_hunting_equipment():
     for pos in coords["창고아이템"]:
         pyautogui.click(*pos)
+        time.sleep(0.1)
         time.sleep(0.1)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
@@ -614,6 +714,12 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print("매크로가 종료되었습니다. (Ctrl+C)")
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("매크로가 종료되었습니다. (Ctrl+C)")
 
+    finally:
+        update_status("N")
     finally:
         update_status("N")
