@@ -4,11 +4,11 @@
 block_cipher = None
 
 
-a = Analysis(['odin_1번.py'],
+a = Analysis(['odin_2번.py'],
              pathex=[],
              binaries=[],
              datas=[],
-             hiddenimports=[],
+             hiddenimports=['cv2'],
              hookspath=[],
              hooksconfig={},
              runtime_hooks=[],
@@ -26,7 +26,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,  
           [],
-          name='odin_1번',
+          name='odin_2번',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
