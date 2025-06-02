@@ -162,8 +162,10 @@ def main():
     
     isFine = True
     isNext = False
+    isDone = False
     for i in range(MAX_CHARACTERS):
         if(not isFine): break
+        if(isDone): break
         False = True
         current_char_index = i + 1
         move_to_character_select_screen()
@@ -200,6 +202,7 @@ def main():
                         isNext = False
                         continue  # 다음 캐릭터로 (3.2.2.1)
                     else:
+                        isDone = True
                         break  # 모든 캐릭터 순회 완료
     # 5번째 캐릭터까지 완료 후 루프
     if(isFine):
