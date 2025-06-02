@@ -342,8 +342,8 @@ def storage_has_equipment():
 
 def retrieve_and_equip_equipment():
     for pos in coords["창고아이템"]:
-        click(pos)
-        time.sleep(0.2)
+        pyautogui.click(*pos)
+        time.sleep(0.3)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
@@ -370,16 +370,16 @@ def unequip_all():
 
 def store_equipment():
     for pos in coords["인벤토리아이템"]:
-        click(pos)
-        time.sleep(0.2)
+        pyautogui.click(*pos)
+        time.sleep(0.3)
     time.sleep(1)
     click(coords["창고보관버튼"])
     click(coords["메뉴"])
 
 def retrieve_hunting_equipment():
     for pos in coords["창고아이템"]:
-        click(*pos)
-        time.sleep(0.2)
+        pyautogui.click(*pos)
+        time.sleep(0.3)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
