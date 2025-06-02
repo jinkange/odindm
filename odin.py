@@ -115,21 +115,7 @@ if len(odin_windows) >= 2:
     move_resize_window(odin_windows[0], 0, 0, 960, 540)
     # move_resize_window(odin_windows[1], 960, 0, 960, 540)
     print("ODIN 창 위치 조정 완료")
-    # mouse_drag(472, 263, 763, 252)
-    # time.sleep(1)
-    # pyautogui.click(923, 43)
-    # time.sleep(1)
-    # pyautogui.click(801, 365)
-    # scroll_on_window(odin_windows[1], -500)
-    # 예시 클릭 (첫 번째 클라이언트의 300,400 위치)
-    # click_on_window(odin_windows[0], 300, 400)
-    template_path = "dungeon_icon.png"
-    if image_exists_at_region(template_path, region):
-        print("던전 아이콘이 존재합니다.")
-    else:
-        print("던전 아이콘이 없습니다.")
-    
-    print("클릭 완료")
+
 
 coords = {
     "메뉴": (923, 43),
@@ -146,7 +132,7 @@ coords = {
     "마을귀환": (20, 187),
     "순간이동": (378, 494),
     "은총의 순간이동":(424,495),
-    "은총 첫번쨰 사냥터":(199 173),
+    "은총첫번쨰사냥터": (199, 173),
     "자동사냥": (904,430),
     "메뉴-던전": (761, 258),
     "정예던전": (166, 77),
@@ -263,12 +249,16 @@ def move_to_character_select_screen():
     
     click(coords["캐릭터선택"])
     click(coords["팝업확인"])
-    pass
 
 def move_to_character_slot(index):
+    while True:
+        if(image_exists_at_region('./images/캐릭터선택화면.png', region)):
+            break
+        time.sleep(1)
+        
     print(f"{index}번째 캐릭터로 이동")
     click(coords["캐릭터선택"][f"{index}번"])
-    click(coords["캐릭터선택"]["선택"])
+    click(coords["캐릭터선택"]["게임시작"])
     in_game_waiting()
     
 def has_dungeon_time():
@@ -414,7 +404,9 @@ def start_auto_hunt():
 
 def click(button_name):
     print(f"{button_name} 클릭")  # 실제 좌표 클릭 함수로 구현
-    time.sleep(0.5)
+    x, y = button_name
+    pyautogui.click(x, y)
+    time.sleep(1)
 
 def image_exists(image_name):
     # 실제 이미지 탐지 로직 구현 필요
