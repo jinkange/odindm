@@ -51,7 +51,7 @@ def scroll_on_window(x, y, amount):
 
 region = (0, 0, 960, 540)
 # region = (960, 0, 960, 540)
-def image_exists_at_region(template_path, region, threshold=0.9):
+def image_exists_at_region(template_path, region, threshold=0.99):
     """
     template_path: 찾을 이미지 파일 경로
     region: (x, y, width, height)1281 631
@@ -261,7 +261,8 @@ def has_dungeon_time():
     if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
         click(coords["메뉴"])
         return True
-    if(not image_exists_at_region('./images/공허의유적소모.png', region)):
+    # if(not image_exists_at_region('./images/공허의유적소모.png', region)):
+    if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
         click(coords["메뉴"])
         return True
     click(coords["메뉴"])
@@ -294,7 +295,8 @@ def enter_dungeon_and_auto_hunt():
                 break
             time.sleep(1)
 
-    if(not image_exists_at_region('./images/공허의유적소모.png', region)):
+    # if(not image_exists_at_region('./images/공허의유적소모.png', region)):
+    if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
         click(coords["공허의유적"])
         click(coords["공허의유적5단계"])
         click(coords["던전이동"])
