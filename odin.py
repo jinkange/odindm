@@ -164,14 +164,11 @@ def main():
     isNext = False
     for i in range(MAX_CHARACTERS):
         if(not isFine): break
-        
+        False = True
         current_char_index = i + 1
         move_to_character_select_screen()
         move_to_character_slot(current_char_index)
-        while True:
-            if(isNext): 
-                isNext = False
-                break
+        while isNext:
             # if has_dungeon_time(): #3.1
             if not has_dungeon_time(): #3.1
                 if has_items():
@@ -200,8 +197,8 @@ def main():
                     continue  # 다음 조건 확인 (3.2로)
                 else:
                     if current_char_index < MAX_CHARACTERS:
-                        isNext = True
-                        break  # 다음 캐릭터로 (3.2.2.1)
+                        isNext = False
+                        continue  # 다음 캐릭터로 (3.2.2.1)
                     else:
                         break  # 모든 캐릭터 순회 완료
     # 5번째 캐릭터까지 완료 후 루프
