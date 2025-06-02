@@ -118,7 +118,7 @@ coords = {
     "5번": (845, 321),
     "게임시작": (851, 499),
     "팝업확인": (518, 331),
-    "마을귀환": (20, 187),
+    "마을귀환": (30, 187),
     "순간이동": (378, 494),
     "은총의 순간이동":(424,495),
     "은총첫번쨰사냥터": (199, 173),
@@ -342,7 +342,7 @@ def storage_has_equipment():
 
 def retrieve_and_equip_equipment():
     for pos in coords["창고아이템"]:
-        click(*pos)
+        click(pos)
         time.sleep(0.2)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
@@ -370,7 +370,7 @@ def unequip_all():
 
 def store_equipment():
     for pos in coords["인벤토리아이템"]:
-        click(*pos)
+        click(pos)
         time.sleep(0.2)
     time.sleep(1)
     click(coords["창고보관버튼"])
