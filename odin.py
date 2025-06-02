@@ -153,7 +153,7 @@ coords = {
     ]
 }
 
-MAX_CHARACTERS = 5
+MAX_CHARACTERS = 2
 current_char_index = 0
 
 def main():
@@ -164,13 +164,13 @@ def main():
     isNext = False
     for i in range(MAX_CHARACTERS):
         if(not isFine): break
-        isNext = True
+        False = True
         current_char_index = i + 1
         move_to_character_select_screen()
         move_to_character_slot(current_char_index)
         while isNext:
-            # if has_dungeon_time(): #3.1
-            if not has_dungeon_time(): #3.1
+            if has_dungeon_time(): #3.1
+            # if not has_dungeon_time(): #3.1 던전 시간있어도 없게 테스트
                 if has_items():
                     while has_dungeon_time():
                         enter_dungeon_and_auto_hunt()
