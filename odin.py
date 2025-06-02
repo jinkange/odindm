@@ -4,6 +4,7 @@ import time
 import pyautogui
 import cv2
 import numpy as np
+import random
 from PIL import ImageGrab
 
 def enum_windows_by_class_and_title(class_name, title):
@@ -265,6 +266,7 @@ def has_dungeon_time():
     click(coords["정예던전"])
     #마우스 스크롤 필요할수 있음
     scroll_on_window(*coords["정예던전스크롤위치"], -1500)
+    time.sleep(1)
     
     if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
         click(coords["메뉴"])
@@ -292,6 +294,7 @@ def enter_dungeon_and_auto_hunt():
     click(coords["메뉴-던전"])
     click(coords["정예던전"])
     scroll_on_window(*coords["정예던전스크롤위치"], -1500)
+    time.sleep(1)
     if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
         click(coords["난쟁이비밀통로"])
         click(coords["난쟁이비밀통로5단계"])
@@ -335,10 +338,6 @@ def open_storage():
         if(image_exists_at_region('./images/창고확인.png', region)):
             break
         time.sleep(1)
-    
-
-def storage_has_equipment():
-    return image_exists("storage_equipment_icon")
 
 def retrieve_and_equip_equipment():
     for pos in coords["창고아이템"]:
@@ -401,16 +400,18 @@ def start_auto_hunt():
         time.sleep(1)
     click(coords["자동사냥"])
 
-def click(button_name):
-    print(f"{button_name} 클릭")  # 실제 좌표 클릭 함수로 구현
-    x, y = button_name
-    pyautogui.click(x, y)
+
+def click(pos):
+    x, y = pos
+    # -2 ~ +2 범위의 무작위 좌표 흔들기
+    rand_x = x + random.randint(-2, 2)
+    rand_y = y + random.randint(-2, 2)
+
+    print(f"클릭 위치: ({rand_x}, {rand_y})")  # 로그 출력
+    pyautogui.moveTo(rand_x, rand_y)
+    pyautogui.click()
     time.sleep(1)
-
-def image_exists(image_name):
-    # 실제 이미지 탐지 로직 구현 필요
-    return True  # 테스트용 기본값
-
+    
 def wait(seconds):
     import time
     time.sleep(seconds)
