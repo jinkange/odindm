@@ -324,7 +324,7 @@ def return_to_town():
         time.sleep(1)
 
 def open_storage():
-    click(coords["창고"])
+    click(coords["창고바로가기"])
     while True:
         if(image_exists_at_region('./images/창고확인.png', region)):
             break
