@@ -53,29 +53,20 @@ region = (0, 0, 960, 540)
 # region = (960, 0, 960, 540)
 def image_exists_at_region(template_path, region, threshold=0.9):
     """
-    특정 좌표(region) 내에서 이미지(template_path)가 존재하는지 판별
-    :param template_path: 찾을 이미지 경로 (예: "dungeon_icon.png")
-    :param region: (x, y, width, height) 영역
-    :param threshold: 유사도 임계값 (0~1 사이, 높을수록 정밀)
-    :return: True (존재함) / False (존재 안 함)
+    template_path: 찾을 이미지 파일 경로
+    region: (x, y, width, height)1281 631
+    threshold: 일치 정도 (0.0 ~ 1.0)
     """
-    # 화면에서 특정 영역만 캡처
-    x, y, w, h = region
-    screenshot = ImageGrab.grab(bbox=(x, y, x + w, y + h))
-    screenshot_np = np.array(screenshot.convert("RGB"))
-    screenshot_gray = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2GRAY)
+    screenshot = pyautogui.screenshot(region=region)
+    # screenshot = screenshot_all_monitors()
+    screenshot = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2GRAY)
 
-    # 템플릿 이미지 불러오기 및 흑백 변환
     template = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
-    if template is None:
-        print(f"템플릿 이미지 로드 실패: {template_path}")
-        return False
 
-    res = cv2.matchTemplate(screenshot_gray, template, cv2.TM_CCOEFF_NORMED)
-    loc = np.where(res >= threshold)
-
-    return len(loc[0]) > 0
-
+    result = cv2.matchTemplate(screenshot, template, cv2.TM_CCOEFF_NORMED)
+    max_val = np.max(result)
+    print(f"{template_path}찾기 :{max_val}")
+    return max_val >= threshold
 def click_if_image_found(template_path, region, threshold=0.9, delay=0.3):
     """
     특정 화면 영역(region)에서 이미지가 있으면 클릭
@@ -119,6 +110,7 @@ if len(odin_windows) >= 2:
 
 coords = {
     "메뉴": (923, 43),
+    "메뉴-캐릭터변경": (798,364),
     "캐릭터선택": {
         "버튼": (801, 365),
         "1번": (838, 79),
@@ -247,7 +239,7 @@ def move_to_character_select_screen():
     if(not image_exists_at_region('./images/메뉴창켜짐확인.png', region)):
         click(coords["메뉴"])
     
-    click(coords["캐릭터선택"])
+    click(coords["메뉴-캐릭터변경"])
     click(coords["팝업확인"])
 
 def move_to_character_slot(index):
