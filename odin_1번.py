@@ -259,7 +259,7 @@ if len(odin_windows) >= 2:
 
 MAX_CHARACTERS = 2
 current_char_index = 0
-exe_path = os.path.join(os.path.dirname(__file__), "odin_2번")
+exe_path = os.path.join(os.path.dirname(__file__), "./odin_2번")
 if os.path.exists(exe_path):
     print(f"odin_2번 실행 중...")
     subprocess.Popen(exe_path)
