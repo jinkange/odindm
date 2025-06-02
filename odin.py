@@ -45,12 +45,8 @@ def click_image(image_path, confidence=0.8):
     else:
         print("이미지 찾지 못함.")
 
-def scroll_on_window(hwnd, amount):
-    rect = win32gui.GetWindowRect(hwnd)
-    center_x = rect[0] + (rect[2] - rect[0]) // 2
-    center_y = rect[1] + (rect[3] - rect[1]) // 2
-
-    pyautogui.moveTo(center_x, center_y)
+def scroll_on_window(x, y, amount):
+    pyautogui.moveTo(x, y)
     pyautogui.scroll(amount)  # 양수: 위로, 음수: 아래로
 
 region = (0, 0, 960, 540)
@@ -147,16 +143,26 @@ coords = {
         "게임시작": (851, 499)
     },
     "팝업확인": (518, 331),
-    "홈버튼": (20, 187),
-    "은총의 순간이동": (25, 133),
+    "마을귀환": (20, 187),
+    "순간이동": (378, 494),
+    "은총의 순간이동":(424,495),
+    "은총 첫번쨰 사냥터":(199 173),
+    "자동사냥": (904,430),
     "메뉴-던전": (761, 258),
     "정예던전": (166, 77),
-    "장비": (881, 43),
+    "정예던전스크롤위치": (315,183),
+    "공허의유적": (401, 296),
+    "공허의유적5단계": (135,239),
+    "난쟁이비밀통로": (614,270),
+    "난쟁이비밀통로5단계": (101,243),
+    "던전이동": (855,499),
+    "던전이동확인팝업": (514,332),
+    "장비창": (881, 43),
     "모두해제버튼": (899, 510),
-    "창고": {
-        "버튼": (752, 491),
-        "보관버튼": (None, None)  # 좌표 없음 - 필요시 채우세요
-    },
+    "창고바로가기": (752, 491),
+    "창고보관버튼": (881,508),
+    "창고꺼내기버튼": (170,506),
+    "자동장착": (902,511),
     "인벤토리아이템": [
         (730, 125), (778, 125), (823, 125), (869, 125), (920, 125),
         (730, 174), (778, 174), (823, 174), (869, 174), (920, 174),
@@ -178,49 +184,51 @@ current_char_index = 0
 def main():
     wake_up_if_sleep_mode()
     ensure_in_game_mode()
-
-    while True:
+    
+    isFine = True
+    for i in range(MAX_CHARACTERS):
+        if(not isFine): break
+        current_char_index = i + 1
         move_to_character_select_screen()
-
-        for i in range(MAX_CHARACTERS):
-            current_char_index = i + 1
-            move_to_character_slot(current_char_index)
-
-            if has_dungeon_time():
+        move_to_character_slot(current_char_index)
+        if has_dungeon_time():
+            while True:
                 if has_items():
-                    enter_dungeon_and_auto_hunt()
-                    while not is_out_of_dungeon():
-                        wait(60)
-                    continue  # 던전 끝나면 다시 3.1로 돌아감
+                    while not has_dungeon_time():
+                        enter_dungeon_and_auto_hunt()
+                        while not is_out_of_dungeon():
+                            wait(60)
+                        continue  # 던전 끝나면 다시 3.1로 돌아감
+                    continue
                 else:
-                    return_to_town()
                     open_storage()
-                    if storage_has_equipment():
-                        retrieve_and_equip_equipment()
+                    if retrieve_and_equip_equipment():
                         continue  # 다시 3.1.1로
                     else:
-                        stop_macro("장비 없음")
-                        return
-            else:  # 던전 시간 없음
-                if has_items():
-                    return_to_town()
-                    unequip_all()
-                    open_storage()
-                    store_equipment()
-                    continue  # 다음 조건 확인 (3.2로)
+                        #아이템 없음 찾기실패 매크로 종료
+                        print("아이템 찾기 실패 매크로 종료")
+                        isFine = False
+                        break
+        else:  # 던전 시간 없음
+            if has_items():
+                return_to_town()
+                unequip_all()
+                open_storage()
+                store_equipment()
+                continue  # 다음 조건 확인 (3.2로)
+            else:
+                if current_char_index < MAX_CHARACTERS:
+                    continue  # 다음 캐릭터로 (3.2.2.1)
                 else:
-                    if current_char_index < MAX_CHARACTERS:
-                        continue  # 다음 캐릭터로 (3.2.2.1)
-                    else:
-                        break  # 모든 캐릭터 순회 완료
-
-        # 5번째 캐릭터까지 완료 후 루프
+                    break  # 모든 캐릭터 순회 완료
+    # 5번째 캐릭터까지 완료 후 루프
+    if(isFine):
+        move_to_character_select_screen()
         move_to_character_slot(1)
         open_storage()
         retrieve_hunting_equipment()
         move_to_hunting_spot()
         start_auto_hunt()
-
         # 필요시 wait 또는 break 넣기
         wait(600)  # 10분마다 루프 또는 조건에 따라 종료
 
@@ -240,13 +248,21 @@ def in_game_waiting():
         if(image_exists_at_region('./images/ingame.png', region)):
             break
         time.sleep(1)
+    
+    click(coords["마을귀환"])
+    click(coords["팝업확인"])
+    
+    while True:
+        if(image_exists_at_region('./images/ingame.png', region)):
+            break
+        time.sleep(1)
         
 def move_to_character_select_screen():
     if(not image_exists_at_region('./images/메뉴창켜짐확인.png', region)):
         click(coords["메뉴"])
     
     click(coords["캐릭터선택"])
-    click(coords["팝업"])
+    click(coords["팝업확인"])
     pass
 
 def move_to_character_slot(index):
@@ -261,6 +277,8 @@ def has_dungeon_time():
     click(coords["메뉴-던전"])
     click(coords["정예던전"])
     #마우스 스크롤 필요할수 있음
+    scroll_on_window(*coords["정예던전스크롤위치"], -500)
+    
     if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
         click(coords["메뉴"])
         return True
@@ -271,7 +289,7 @@ def has_dungeon_time():
     return False
 
 def has_items():
-    click(coords["장비"])
+    click(coords["장비창"])
     if(not image_exists_at_region('./images/장비 미장착확인1.png', region)):
         click(coords["메뉴"])
         return True
@@ -282,50 +300,117 @@ def has_items():
     return False
 
 def enter_dungeon_and_auto_hunt():
-    click("enter_dungeon_button")
-    wait(3)
-    click("start_auto_hunt")
+    if(not image_exists_at_region('./images/메뉴창켜짐확인.png', region)):
+        click(coords["메뉴"])
+    click(coords["메뉴-던전"])
+    click(coords["정예던전"])
+    scroll_on_window(*coords["정예던전스크롤위치"], -500)
+    if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
+        click(coords["난쟁이비밀통로"])
+        click(coords["난쟁이비밀통로5단계"])
+        click(coords["던전이동"])
+        click(coords["던전이동확인팝업"])
+        while True:
+            if(image_exists_at_region('./images/난쟁이5단계확인.png', region)):
+                break
+            time.sleep(1)
 
+    if(not image_exists_at_region('./images/공허의유적소모.png', region)):
+        click(coords["공허의유적"])
+        click(coords["공허의유적5단계"])
+        click(coords["던전이동"])
+        click(coords["던전이동확인팝업"])    
+        while True:
+            if(image_exists_at_region('./images/공허5단계확인.png', region)):
+                break
+            time.sleep(1)
+    
+    click(coords["자동사냥"])
+    click(coords["순간이동"])
+    
+    
+    
 def is_out_of_dungeon():
-    return image_exists("out_of_dungeon_ui")
+    return image_exists_at_region('./images/던전끝 확인.png', region)
 
 def return_to_town():
-    click("return_town_button")
-    wait(3)
+    click(coords["마을귀환"])
+    click(coords["팝업확인"])
+    
+    while True:
+        if(image_exists_at_region('./images/ingame.png', region)):
+            break
+        time.sleep(1)
 
 def open_storage():
-    click("open_storage_button")
-    wait(2)
+    click(coords["창고"])
+    while True:
+        if(image_exists_at_region('./images/창고확인.png', region)):
+            break
+        time.sleep(1)
+    
 
 def storage_has_equipment():
     return image_exists("storage_equipment_icon")
 
 def retrieve_and_equip_equipment():
-    click("equipment_in_storage")
-    click("equip_button")
-    wait(1)
+    for pos in coords["창고아이템"]:
+        click(*pos)
+        time.sleep(0.2)
+    time.sleep(1)
+    click(coords["창고꺼내기버튼"])
+    click(coords["메뉴"])
+    click(coords["장비창"])
+    click(coords["자동장착"])
+    time.sleep(1)
+    if(not image_exists_at_region('./images/장비 미장착확인1.png', region)):
+        click(coords["메뉴"])
+        return False
+    if(not image_exists_at_region('./images/장비 미장착확인2.png', region)):
+        click(coords["메뉴"])
+        return False
+    click(coords["메뉴"])
+    return True
 
 def stop_macro(reason):
     print(f"[작동 중지] {reason}")
 
 def unequip_all():
-    click("character_panel")
-    click("unequip_all_button")
+    click(coords["장비창"])
+    click(coords["모두해제버튼"])
+    click(coords["메뉴"])
 
 def store_equipment():
-    click("equipment")
-    click("store_to_storage_button")
+    for pos in coords["인벤토리아이템"]:
+        click(*pos)
+        time.sleep(0.2)
+    time.sleep(1)
+    click(coords["창고보관버튼"])
+    click(coords["메뉴"])
 
 def retrieve_hunting_equipment():
-    click("storage_hunting_equipment")
-    click("equip_button")
+    for pos in coords["창고아이템"]:
+        click(*pos)
+        time.sleep(0.2)
+    time.sleep(1)
+    click(coords["창고꺼내기버튼"])
+    click(coords["메뉴"])
+    click(coords["장비창"])
+    click(coords["자동장착"])
+    click(coords["메뉴"])
 
 def move_to_hunting_spot():
-    click("map_icon")
-    click("hunting_spot_location")
+    
+    click(coords["은총의 순간이동"])
+    click(coords["은총 첫번쨰 사냥터"])
+
 
 def start_auto_hunt():
-    click("auto_hunt_button")
+    while True:
+        if(image_exists_at_region('./images/ingame.png', region)):
+            break
+        time.sleep(1)
+    click(coords["자동사냥"])
 
 def click(button_name):
     print(f"{button_name} 클릭")  # 실제 좌표 클릭 함수로 구현
