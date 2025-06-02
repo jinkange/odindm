@@ -51,7 +51,7 @@ def scroll_on_window(x, y, amount):
 
 region = (0, 0, 960, 540)
 # region = (960, 0, 960, 540)
-def image_exists_at_region(template_path, region, threshold=0.99):
+def image_exists_at_region(template_path, region, threshold=0.98):
     """
     template_path: 찾을 이미지 파일 경로
     region: (x, y, width, height)1281 631
@@ -161,20 +161,26 @@ def main():
     ensure_in_game_mode()
     
     isFine = True
+    isNext = False
     for i in range(MAX_CHARACTERS):
         if(not isFine): break
+        
         current_char_index = i + 1
         move_to_character_select_screen()
         move_to_character_slot(current_char_index)
-        if has_dungeon_time():
-            while True:
+        while True:
+            if(isNext): 
+                isNext = False
+                break
+            # if has_dungeon_time(): #3.1
+            if not has_dungeon_time(): #3.1
                 if has_items():
                     while has_dungeon_time():
                         enter_dungeon_and_auto_hunt()
                         while not is_out_of_dungeon():
                             wait(60)
                         continue  # 던전 끝나면 다시 3.1로 돌아감
-                    continue
+                    break
                 else:
                     open_storage()
                     if retrieve_and_equip_equipment():
@@ -184,18 +190,20 @@ def main():
                         print("아이템 찾기 실패 매크로 종료")
                         isFine = False
                         break
-        else:  # 던전 시간 없음
-            if has_items():
-                return_to_town()
-                unequip_all()
-                open_storage()
-                store_equipment()
-                continue  # 다음 조건 확인 (3.2로)
-            else:
-                if current_char_index < MAX_CHARACTERS:
-                    continue  # 다음 캐릭터로 (3.2.2.1)
+                
+            else:  # 던전 시간 없음
+                if has_items():
+                    return_to_town()
+                    unequip_all()
+                    open_storage()
+                    store_equipment()
+                    continue  # 다음 조건 확인 (3.2로)
                 else:
-                    break  # 모든 캐릭터 순회 완료
+                    if current_char_index < MAX_CHARACTERS:
+                        isNext = True
+                        break  # 다음 캐릭터로 (3.2.2.1)
+                    else:
+                        break  # 모든 캐릭터 순회 완료
     # 5번째 캐릭터까지 완료 후 루프
     if(isFine):
         move_to_character_select_screen()
@@ -256,13 +264,12 @@ def has_dungeon_time():
     click(coords["메뉴-던전"])
     click(coords["정예던전"])
     #마우스 스크롤 필요할수 있음
-    scroll_on_window(*coords["정예던전스크롤위치"], -500)
+    scroll_on_window(*coords["정예던전스크롤위치"], -1500)
     
     if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
         click(coords["메뉴"])
         return True
-    # if(not image_exists_at_region('./images/공허의유적소모.png', region)):
-    if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
+    if(not image_exists_at_region('./images/공허의유적소모.png', region)):
         click(coords["메뉴"])
         return True
     click(coords["메뉴"])
@@ -295,8 +302,7 @@ def enter_dungeon_and_auto_hunt():
                 break
             time.sleep(1)
 
-    # if(not image_exists_at_region('./images/공허의유적소모.png', region)):
-    if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
+    if(not image_exists_at_region('./images/공허의유적소모.png', region)):
         click(coords["공허의유적"])
         click(coords["공허의유적5단계"])
         click(coords["던전이동"])
@@ -358,7 +364,8 @@ def stop_macro(reason):
 
 def unequip_all():
     click(coords["장비창"])
-    click(coords["모두해제버튼"])
+    if(image_exists_at_region('./images/장비모두해제.png', region)):
+        click(coords["모두해제버튼"])
     click(coords["메뉴"])
 
 def store_equipment():
@@ -377,7 +384,8 @@ def retrieve_hunting_equipment():
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
     click(coords["장비창"])
-    click(coords["자동장착"])
+    if(image_exists_at_region('./images/자동장착.png', region)):
+        click(coords["자동장착"])
     click(coords["메뉴"])
 
 def move_to_hunting_spot():
