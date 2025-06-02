@@ -169,7 +169,7 @@ def main():
         if has_dungeon_time():
             while True:
                 if has_items():
-                    while not has_dungeon_time():
+                    while has_dungeon_time():
                         enter_dungeon_and_auto_hunt()
                         while not is_out_of_dungeon():
                             wait(60)
@@ -284,7 +284,7 @@ def enter_dungeon_and_auto_hunt():
         click(coords["메뉴"])
     click(coords["메뉴-던전"])
     click(coords["정예던전"])
-    scroll_on_window(*coords["정예던전스크롤위치"], -500)
+    scroll_on_window(*coords["정예던전스크롤위치"], -1500)
     if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
         click(coords["난쟁이비밀통로"])
         click(coords["난쟁이비밀통로5단계"])
