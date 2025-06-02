@@ -6,6 +6,30 @@ import cv2
 import numpy as np
 import random
 from PIL import ImageGrab
+import os
+
+STATUS_FILE = "status.txt"
+
+
+# 파일이 없으면 기본 Y로 생성
+def init_status_file():
+    if not os.path.exists(STATUS_FILE):
+        with open(STATUS_FILE, "w") as f:
+            f.write("N")
+            
+
+# 상태 읽기 (Y/N)
+def read_status():
+    with open(STATUS_FILE, "r") as f:
+        return f.read().strip()
+    
+# 상태 갱신
+def update_status(new_status):
+    with open(STATUS_FILE, "w") as f:
+        f.write(new_status)
+        
+init_status_file()
+
 
 def enum_windows_by_class_and_title(class_name, title):
     hwnds = []
@@ -50,8 +74,102 @@ def scroll_on_window(x, y, amount):
     pyautogui.moveTo(x, y)
     pyautogui.scroll(amount)  # 양수: 위로, 음수: 아래로
 
-region = (0, 0, 960, 540)
-# region = (960, 0, 960, 540)
+# region = (0, 0, 960, 540)
+# coords = {
+#     "메뉴": (923, 43),
+#"드레그시작": (472,263),
+#"드레그끝": (763,252,)
+#     "메뉴-캐릭터변경": (798,364),
+#     "1번": (838, 79),
+#     "2번": (840, 152),
+#     "3번": (831, 197),
+#     "4번": (834, 262),
+#     "5번": (845, 321),
+#     "게임시작": (851, 499),
+#     "팝업확인": (518, 331),
+#     "마을귀환": (30, 187),
+#     "순간이동": (378, 494),
+#     "은총의 순간이동":(424,495),
+#     "은총첫번쨰사냥터": (199, 173),
+#     "자동사냥": (904,430),
+#     "메뉴-던전": (761, 258),
+#     "정예던전": (166, 77),
+#     "정예던전스크롤위치": (315,183),
+#     "공허의유적": (401, 296),
+#     "공허의유적5단계": (135,239),
+#     "난쟁이비밀통로": (614,270),
+#     "난쟁이비밀통로5단계": (101,243),
+#     "던전이동": (855,499),
+#     "던전이동확인팝업": (514,332),
+#     "장비창": (881, 43),
+#     "모두해제버튼": (899, 510),
+#     "창고바로가기": (752, 491),
+#     "창고보관버튼": (881,508),
+#     "창고꺼내기버튼": (170,506),
+#     "자동장착": (902,511),
+#     "인벤토리아이템": [
+#         (730, 125), (778, 125), (823, 125), (869, 125), (920, 125),
+#         (730, 174), (778, 174), (823, 174), (869, 174), (920, 174),
+#         (730, 217), (778, 217), (823, 217), (869, 217), (920, 217),
+#         (730, 267), (778, 267), (823, 267), (869, 267), (920, 267),
+#     ],
+#     "창고아이템": [
+#         (39, 160), (87, 160), (140, 160), (176, 160),
+#         (45, 212), (94, 212), (133, 212), (185, 212),
+#         (34, 257), (94, 257), (133, 257), (185, 257),
+#         (34, 308), (94, 308), (133, 308), (185, 308),
+#         (34, 351), (94, 351), (133, 351), (185, 351),
+#     ]
+# }
+
+region = (960, 0, 960, 540)
+coords = {
+    "드레그시작": (1432,263),
+    "드레그끝": (1015,252),
+    "메뉴": (1883, 43),
+    "메뉴-캐릭터변경": (1758, 364),
+    "1번": (1798, 79),
+    "2번": (1800, 152),
+    "3번": (1791, 197),
+    "4번": (1794, 262),
+    "5번": (1805, 321),
+    "게임시작": (1811, 499),
+    "팝업확인": (1478, 331),
+    "마을귀환": (990, 187),
+    "순간이동": (1338, 494),
+    "은총의 순간이동": (1384, 495),
+    "은총첫번쨰사냥터": (1159, 173),
+    "자동사냥": (1864, 430),
+    "메뉴-던전": (1721, 258),
+    "정예던전": (1126, 77),
+    "정예던전스크롤위치": (1275, 183),
+    "공허의유적": (1361, 296),
+    "공허의유적5단계": (1095, 239),
+    "난쟁이비밀통로": (1574, 270),
+    "난쟁이비밀통로5단계": (1061, 243),
+    "던전이동": (1815, 499),
+    "던전이동확인팝업": (1474, 332),
+    "장비창": (1841, 43),
+    "모두해제버튼": (1859, 510),
+    "창고바로가기": (1712, 491),
+    "창고보관버튼": (1841, 508),
+    "창고꺼내기버튼": (1130, 506),
+    "자동장착": (1862, 511),
+    "인벤토리아이템": [
+        (1690, 125), (1738, 125), (1783, 125), (1829, 125), (1880, 125),
+        (1690, 174), (1738, 174), (1783, 174), (1829, 174), (1880, 174),
+        (1690, 217), (1738, 217), (1783, 217), (1829, 217), (1880, 217),
+        (1690, 267), (1738, 267), (1783, 267), (1829, 267), (1880, 267),
+    ],
+    "창고아이템": [
+        (999, 160), (1047, 160), (1100, 160), (1136, 160),
+        (1005, 212), (1054, 212), (1093, 212), (1145, 212),
+        (994, 257), (1054, 257), (1093, 257), (1145, 257),
+        (994, 308), (1054, 308), (1093, 308), (1145, 308),
+        (994, 351), (1054, 351), (1093, 351), (1145, 351),
+    ]
+}
+
 def image_exists_at_region(template_path, region, threshold=0.95):
     """
     template_path: 찾을 이미지 파일 경로
@@ -101,65 +219,49 @@ def click_if_image_found(template_path, region, threshold=0.9, delay=0.3):
         return True
     return False
 # 정확한 제목: 띄어쓰기 포함 "ODIN  "
-odin_windows = enum_windows_by_class_and_title("UnrealWindow", "ODIN  ")
+
+def get_window_rect(hwnd):
+    rect = win32gui.GetWindowRect(hwnd)
+    return rect  # (left, top, right, bottom)
+def get_sorted_odin_windows():
+    odin_windows = enum_windows_by_class_and_title("UnrealWindow", "ODIN  ")
+    odin_windows = sorted(odin_windows, key=lambda hwnd: get_window_rect(hwnd)[0])  # 좌측 기준 정렬
+    return odin_windows
+
+##
+##화면조정
+##
+
+def enum_windows_by_title(title):
+    """특정 창 제목과 일치하는 핸들을 반환"""
+    hwnds = []
+    def callback(hwnd, _):
+        if win32gui.IsWindowVisible(hwnd) and title in win32gui.GetWindowText(hwnd):
+            hwnds.append(hwnd)
+    win32gui.EnumWindows(callback, None)
+    return hwnds
+
+def move_resize_window(hwnd, x, y, width, height):
+    """창 위치와 크기 조절"""
+    win32gui.MoveWindow(hwnd, x, y, width, height, True)
+    
+odin_windows = get_sorted_odin_windows()
+console_windows = enum_windows_by_title("odin_2번")
+
+odin_windows = get_sorted_odin_windows()
 
 if len(odin_windows) >= 2:
-    move_resize_window(odin_windows[0], 0, 0, 960, 540)
-    # move_resize_window(odin_windows[1], 960, 0, 960, 540)
+    move_resize_window(odin_windows[0], 0, 0, 960, 540)# 왼쪽
+    move_resize_window(odin_windows[1], 960, 0, 960, 540)# 오른쪽
+    move_resize_window(console_windows[0], 960, 550, 960, 200)
     print("ODIN 창 위치 조정 완료")
 
 
-coords = {
-    "메뉴": (923, 43),
-    "메뉴-캐릭터변경": (798,364),
-    "1번": (838, 79),
-    "2번": (840, 152),
-    "3번": (831, 197),
-    "4번": (834, 262),
-    "5번": (845, 321),
-    "게임시작": (851, 499),
-    "팝업확인": (518, 331),
-    "마을귀환": (30, 187),
-    "순간이동": (378, 494),
-    "은총의 순간이동":(424,495),
-    "은총첫번쨰사냥터": (199, 173),
-    "자동사냥": (904,430),
-    "메뉴-던전": (761, 258),
-    "정예던전": (166, 77),
-    "정예던전스크롤위치": (315,183),
-    "공허의유적": (401, 296),
-    "공허의유적5단계": (135,239),
-    "난쟁이비밀통로": (614,270),
-    "난쟁이비밀통로5단계": (101,243),
-    "던전이동": (855,499),
-    "던전이동확인팝업": (514,332),
-    "장비창": (881, 43),
-    "모두해제버튼": (899, 510),
-    "창고바로가기": (752, 491),
-    "창고보관버튼": (881,508),
-    "창고꺼내기버튼": (170,506),
-    "자동장착": (902,511),
-    "인벤토리아이템": [
-        (730, 125), (778, 125), (823, 125), (869, 125), (920, 125),
-        (730, 174), (778, 174), (823, 174), (869, 174), (920, 174),
-        (730, 217), (778, 217), (823, 217), (869, 217), (920, 217),
-        (730, 267), (778, 267), (823, 267), (869, 267), (920, 267),
-    ],
-    "창고아이템": [
-        (39, 160), (87, 160), (140, 160), (176, 160),
-        (45, 212), (94, 212), (133, 212), (185, 212),
-        (34, 257), (94, 257), (133, 257), (185, 257),
-        (34, 308), (94, 308), (133, 308), (185, 308),
-        (34, 351), (94, 351), (133, 351), (185, 351),
-    ]
-}
 
 MAX_CHARACTERS = 2
 current_char_index = 0
 
-def main():
-    wake_up_if_sleep_mode()
-    ensure_in_game_mode()
+def main():    
     
     isFine = True
     isNext = False
@@ -169,6 +271,14 @@ def main():
         if(isDone): break
         isNext = True
         current_char_index = i + 1
+        # 매크로 실행 루프
+        while True:
+            status = read_status()
+            if status == "N":
+                update_status('Y')
+                break
+            time.sleep(1)
+        wake_up_if_sleep_mode()
         move_to_character_select_screen()
         move_to_character_slot(current_char_index)
         while isNext:
@@ -177,6 +287,7 @@ def main():
                 if has_items():
                     while has_dungeon_time():
                         enter_dungeon_and_auto_hunt()
+                        update_status('N')
                         while not is_out_of_dungeon():
                             wait(60)
                         continue  # 던전 끝나면 다시 3.1로 돌아감
@@ -184,10 +295,11 @@ def main():
                 else:
                     open_storage()
                     if retrieve_and_equip_equipment():
-                        continue  # 다시 3.1.1로
+                        continue  # 다시 3.1로
                     else:
                         #아이템 없음 찾기실패 매크로 종료
                         print("아이템 찾기 실패 매크로 종료")
+                        update_status('N')
                         isFine = False
                         break
                 
@@ -201,6 +313,7 @@ def main():
                 else:
                     if current_char_index < MAX_CHARACTERS:
                         isNext = False
+                        update_status('N')
                         continue  # 다음 캐릭터로 (3.2.2.1)
                     else:
                         isDone = True
@@ -219,7 +332,7 @@ def main():
 # === 기능 구현 자리 (좌표 기반 구현 필요) ===
 def wake_up_if_sleep_mode():
     if(image_exists_at_region('./images/절전모드.png', region)):
-        mouse_drag(472, 263, 763, 252)
+        mouse_drag(*coords["드레그시작"], *coords["드레그끝"])
     pass
 
 def ensure_in_game_mode():
@@ -304,8 +417,7 @@ def enter_dungeon_and_auto_hunt():
             if(image_exists_at_region('./images/난쟁이5단계확인.png', region)):
                 break
             time.sleep(1)
-
-    if(not image_exists_at_region('./images/공허의유적소모.png', region)):
+    elif(not image_exists_at_region('./images/공허의유적소모.png', region)):
         click(coords["공허의유적"])
         click(coords["공허의유적5단계"])
         click(coords["던전이동"])
@@ -342,17 +454,17 @@ def open_storage():
 def retrieve_and_equip_equipment():
     for pos in coords["창고아이템"]:
         pyautogui.click(*pos)
-        time.sleep(0.3)
+        time.sleep(0.1)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
     click(coords["장비창"])
     click(coords["자동장착"])
     time.sleep(1)
-    if(not image_exists_at_region('./images/장비 미장착확인1.png', region)):
+    if(image_exists_at_region('./images/장비 미장착확인1.png', region)):
         click(coords["메뉴"])
         return False
-    if(not image_exists_at_region('./images/장비 미장착확인2.png', region)):
+    if(image_exists_at_region('./images/장비 미장착확인2.png', region)):
         click(coords["메뉴"])
         return False
     click(coords["메뉴"])
@@ -370,7 +482,7 @@ def unequip_all():
 def store_equipment():
     for pos in coords["인벤토리아이템"]:
         pyautogui.click(*pos)
-        time.sleep(0.3)
+        time.sleep(0.1)
     time.sleep(1)
     click(coords["창고보관버튼"])
     click(coords["메뉴"])
@@ -378,7 +490,7 @@ def store_equipment():
 def retrieve_hunting_equipment():
     for pos in coords["창고아이템"]:
         pyautogui.click(*pos)
-        time.sleep(0.3)
+        time.sleep(0.1)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
@@ -418,5 +530,10 @@ def wait(seconds):
 
 # === 시작 ===
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("매크로가 종료되었습니다. (Ctrl+C)")
 
+    finally:
+        update_status("N")
