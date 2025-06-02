@@ -52,7 +52,7 @@ def scroll_on_window(x, y, amount):
 
 region = (0, 0, 960, 540)
 # region = (960, 0, 960, 540)
-def image_exists_at_region(template_path, region, threshold=0.98):
+def image_exists_at_region(template_path, region, threshold=0.95):
     """
     template_path: 찾을 이미지 파일 경로
     region: (x, y, width, height)1281 631
