@@ -166,7 +166,7 @@ def main():
     for i in range(MAX_CHARACTERS):
         if(not isFine): break
         if(isDone): break
-        False = True
+        isNext = True
         current_char_index = i + 1
         move_to_character_select_screen()
         move_to_character_slot(current_char_index)
