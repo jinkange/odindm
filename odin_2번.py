@@ -30,30 +30,6 @@ def update_status(new_status):
         
 init_status_file()
 
-import os
-
-STATUS_FILE = "status.txt"
-
-
-# 파일이 없으면 기본 Y로 생성
-def init_status_file():
-    if not os.path.exists(STATUS_FILE):
-        with open(STATUS_FILE, "w") as f:
-            f.write("N")
-            
-
-# 상태 읽기 (Y/N)
-def read_status():
-    with open(STATUS_FILE, "r") as f:
-        return f.read().strip()
-    
-# 상태 갱신
-def update_status(new_status):
-    with open(STATUS_FILE, "w") as f:
-        f.write(new_status)
-        
-init_status_file()
-
 
 def enum_windows_by_class_and_title(class_name, title):
     hwnds = []
@@ -312,7 +288,6 @@ def main():
                     while has_dungeon_time():
                         enter_dungeon_and_auto_hunt()
                         update_status('N')
-                        update_status('N')
                         while not is_out_of_dungeon():
                             wait(60)
                         continue  # 던전 끝나면 다시 3.1로 돌아감
@@ -321,11 +296,9 @@ def main():
                     open_storage()
                     if retrieve_and_equip_equipment():
                         continue  # 다시 3.1로
-                        continue  # 다시 3.1로
                     else:
                         #아이템 없음 찾기실패 매크로 종료
                         print("아이템 찾기 실패 매크로 종료")
-                        update_status('N')
                         update_status('N')
                         isFine = False
                         break
@@ -340,7 +313,6 @@ def main():
                 else:
                     if current_char_index < MAX_CHARACTERS:
                         isNext = False
-                        update_status('N')
                         update_status('N')
                         continue  # 다음 캐릭터로 (3.2.2.1)
                     else:
@@ -360,7 +332,6 @@ def main():
 # === 기능 구현 자리 (좌표 기반 구현 필요) ===
 def wake_up_if_sleep_mode():
     if(image_exists_at_region('./images/절전모드.png', region)):
-        mouse_drag(*coords["드레그시작"], *coords["드레그끝"])
         mouse_drag(*coords["드레그시작"], *coords["드레그끝"])
     pass
 
@@ -484,7 +455,6 @@ def retrieve_and_equip_equipment():
     for pos in coords["창고아이템"]:
         pyautogui.click(*pos)
         time.sleep(0.1)
-        time.sleep(0.1)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
@@ -492,10 +462,8 @@ def retrieve_and_equip_equipment():
     click(coords["자동장착"])
     time.sleep(1)
     if(image_exists_at_region('./images/장비 미장착확인1.png', region)):
-    if(image_exists_at_region('./images/장비 미장착확인1.png', region)):
         click(coords["메뉴"])
         return False
-    if(image_exists_at_region('./images/장비 미장착확인2.png', region)):
     if(image_exists_at_region('./images/장비 미장착확인2.png', region)):
         click(coords["메뉴"])
         return False
@@ -515,7 +483,6 @@ def store_equipment():
     for pos in coords["인벤토리아이템"]:
         pyautogui.click(*pos)
         time.sleep(0.1)
-        time.sleep(0.1)
     time.sleep(1)
     click(coords["창고보관버튼"])
     click(coords["메뉴"])
@@ -523,7 +490,6 @@ def store_equipment():
 def retrieve_hunting_equipment():
     for pos in coords["창고아이템"]:
         pyautogui.click(*pos)
-        time.sleep(0.1)
         time.sleep(0.1)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
@@ -568,12 +534,6 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print("매크로가 종료되었습니다. (Ctrl+C)")
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("매크로가 종료되었습니다. (Ctrl+C)")
 
-    finally:
-        update_status("N")
     finally:
         update_status("N")

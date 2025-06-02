@@ -7,11 +7,7 @@ import numpy as np
 import random
 from PIL import ImageGrab
 import os
-<<<<<<< Updated upstream:odin_1번.py
 import subprocess
-=======
-
->>>>>>> Stashed changes:odin.py
 STATUS_FILE = "status.txt"
 
 
@@ -81,11 +77,7 @@ def scroll_on_window(x, y, amount):
 region = (0, 0, 960, 540)
 coords = {
     "메뉴": (923, 43),
-<<<<<<< Updated upstream:odin_1번.py
 "드레그시작": (472,263),
-=======
-    "드레그시작": (472,263),
->>>>>>> Stashed changes:odin.py
     "드레그끝": (763,252),
     "메뉴-캐릭터변경": (798,364),
     "1번": (838, 79),
@@ -129,8 +121,6 @@ coords = {
         (34, 351), (94, 351), (133, 351), (185, 351),
     ]
 }
-<<<<<<< Updated upstream:odin_1번.py
-=======
 
 # region = (960, 0, 960, 540)
 # coords = {
@@ -238,123 +228,6 @@ def get_sorted_odin_windows():
     odin_windows = sorted(odin_windows, key=lambda hwnd: get_window_rect(hwnd)[0])  # 좌측 기준 정렬
     return odin_windows
 
-odin_windows = get_sorted_odin_windows()
-
-if len(odin_windows) >= 2:
-    move_resize_window(odin_windows[0], 0, 0, 960, 540)# 왼쪽
-    move_resize_window(odin_windows[1], 960, 0, 960, 540)# 오른쪽
-    print("ODIN 창 위치 조정 완료")
-
-
->>>>>>> Stashed changes:odin.py
-
-# region = (960, 0, 960, 540)
-# coords = {
-#     "드레그시작": (1432,263),
-#     "드레그끝": (1015,252),
-#     "메뉴": (1883, 43),
-#     "메뉴-캐릭터변경": (1758, 364),
-#     "1번": (1798, 79),
-#     "2번": (1800, 152),
-#     "3번": (1791, 197),
-#     "4번": (1794, 262),
-#     "5번": (1805, 321),
-#     "게임시작": (1811, 499),
-#     "팝업확인": (1478, 331),
-#     "마을귀환": (990, 187),
-#     "순간이동": (1338, 494),
-#     "은총의 순간이동": (1384, 495),
-#     "은총첫번쨰사냥터": (1159, 173),
-#     "자동사냥": (1864, 430),
-#     "메뉴-던전": (1721, 258),
-#     "정예던전": (1126, 77),
-#     "정예던전스크롤위치": (1275, 183),
-#     "공허의유적": (1361, 296),
-#     "공허의유적5단계": (1095, 239),
-#     "난쟁이비밀통로": (1574, 270),
-#     "난쟁이비밀통로5단계": (1061, 243),
-#     "던전이동": (1815, 499),
-#     "던전이동확인팝업": (1474, 332),
-#     "장비창": (1841, 43),
-#     "모두해제버튼": (1859, 510),
-#     "창고바로가기": (1712, 491),
-#     "창고보관버튼": (1841, 508),
-#     "창고꺼내기버튼": (1130, 506),
-#     "자동장착": (1862, 511),
-#     "인벤토리아이템": [
-#         (1690, 125), (1738, 125), (1783, 125), (1829, 125), (1880, 125),
-#         (1690, 174), (1738, 174), (1783, 174), (1829, 174), (1880, 174),
-#         (1690, 217), (1738, 217), (1783, 217), (1829, 217), (1880, 217),
-#         (1690, 267), (1738, 267), (1783, 267), (1829, 267), (1880, 267),
-#     ],
-#     "창고아이템": [
-#         (999, 160), (1047, 160), (1100, 160), (1136, 160),
-#         (1005, 212), (1054, 212), (1093, 212), (1145, 212),
-#         (994, 257), (1054, 257), (1093, 257), (1145, 257),
-#         (994, 308), (1054, 308), (1093, 308), (1145, 308),
-#         (994, 351), (1054, 351), (1093, 351), (1145, 351),
-#     ]
-# }
-
-def image_exists_at_region(template_path, region, threshold=0.95):
-    """
-    template_path: 찾을 이미지 파일 경로
-    region: (x, y, width, height)1281 631
-    threshold: 일치 정도 (0.0 ~ 1.0)
-    """
-    region2 = (0, 0, 960, 540)
-    screenshot = pyautogui.screenshot(region=region2)
-    # screenshot = screenshot_all_monitors()
-    screenshot = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2GRAY)
-
-    template = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
-
-    result = cv2.matchTemplate(screenshot, template, cv2.TM_CCOEFF_NORMED)
-    max_val = np.max(result)
-    print(f"{template_path}찾기 :{max_val}")
-    return max_val >= threshold
-def click_if_image_found(template_path, region, threshold=0.9, delay=0.3):
-    """
-    특정 화면 영역(region)에서 이미지가 있으면 클릭
-    :param template_path: 비교할 이미지 파일 경로
-    :param region: (x, y, width, height) - 검색 범위
-    :param threshold: 매칭 유사도 (0~1), 높을수록 정확
-    :param delay: 클릭 후 대기 시간
-    :return: True (찾아서 클릭함), False (못 찾음)
-    """
-    x, y, w, h = region
-    # 지정 범위 스크린샷
-    screenshot = ImageGrab.grab(bbox=(x, y, x + w, y + h))
-    screenshot_np = np.array(screenshot.convert("RGB"))
-    screenshot_gray = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2GRAY)
-
-    # 템플릿 이미지 로드
-    template = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
-    if template is None:
-        print(f"[오류] 이미지 불러오기 실패: {template_path}")
-        return False
-
-    res = cv2.matchTemplate(screenshot_gray, template, cv2.TM_CCOEFF_NORMED)
-    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-
-    if max_val >= threshold:
-        click_x = x + max_loc[0] + template.shape[1] // 2
-        click_y = y + max_loc[1] + template.shape[0] // 2
-        pyautogui.moveTo(click_x, click_y)
-        pyautogui.click()
-        time.sleep(delay)
-        return True
-    return False
-# 정확한 제목: 띄어쓰기 포함 "ODIN  "
-
-def get_window_rect(hwnd):
-    rect = win32gui.GetWindowRect(hwnd)
-    return rect  # (left, top, right, bottom)
-def get_sorted_odin_windows():
-    odin_windows = enum_windows_by_class_and_title("UnrealWindow", "ODIN  ")
-    odin_windows = sorted(odin_windows, key=lambda hwnd: get_window_rect(hwnd)[0])  # 좌측 기준 정렬
-    return odin_windows
-
 ###
 ###창조절#
 ###
@@ -404,11 +277,8 @@ def main():
                 update_status('Y')
                 break
             time.sleep(1)
-<<<<<<< Updated upstream:odin_1번.py
         wake_up_if_sleep_mode()
         # ensure_in_game_mode()
-=======
->>>>>>> Stashed changes:odin.py
         move_to_character_select_screen()
         move_to_character_slot(current_char_index)
         while isNext:
@@ -665,12 +535,6 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print("매크로가 종료되었습니다. (Ctrl+C)")
-<<<<<<< Updated upstream:odin_1번.py
-    except Exception as e:
-        print(e)
-        input('...')
-=======
 
->>>>>>> Stashed changes:odin.py
     finally:
         update_status("N")
