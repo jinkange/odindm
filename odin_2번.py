@@ -16,7 +16,6 @@ def init_status_file():
     if not os.path.exists(STATUS_FILE):
         with open(STATUS_FILE, "w") as f:
             f.write("N")
-            
 
 # 상태 읽기 (Y/N)
 def read_status():
@@ -258,7 +257,7 @@ if len(odin_windows) >= 2:
 
 
 
-MAX_CHARACTERS = 2
+MAX_CHARACTERS = 5
 current_char_index = 0
 
 def main():    
@@ -272,13 +271,17 @@ def main():
         isNext = True
         current_char_index = i + 1
         # 매크로 실행 루프
+        print("매크로 작동 대기")
         while True:
             status = read_status()
             if status == "N":
                 update_status('Y')
                 break
             time.sleep(1)
+        print("매크로 작동 시작")
         wake_up_if_sleep_mode()
+        click(coords["메뉴"])
+        click(coords["메뉴"])
         move_to_character_select_screen()
         move_to_character_slot(current_char_index)
         while isNext:
@@ -289,9 +292,8 @@ def main():
                         enter_dungeon_and_auto_hunt()
                         update_status('N')
                         while not is_out_of_dungeon():
-                            wait(60)
+                            wait(10)
                         continue  # 던전 끝나면 다시 3.1로 돌아감
-                    break
                 else:
                     open_storage()
                     if retrieve_and_equip_equipment():
@@ -299,7 +301,6 @@ def main():
                     else:
                         #아이템 없음 찾기실패 매크로 종료
                         print("아이템 찾기 실패 매크로 종료")
-                        update_status('N')
                         isFine = False
                         break
                 
@@ -312,10 +313,11 @@ def main():
                     continue  # 다음 조건 확인 (3.2로)
                 else:
                     if current_char_index < MAX_CHARACTERS:
-                        isNext = False
+                        print("캐릭터 작업완료")
                         update_status('N')
-                        continue  # 다음 캐릭터로 (3.2.2.1)
+                        isNext = False
                     else:
+                        print("모든 캐릭터 작업완료")
                         isDone = True
                         break  # 모든 캐릭터 순회 완료
     # 5번째 캐릭터까지 완료 후 루프
@@ -326,14 +328,15 @@ def main():
         retrieve_hunting_equipment()
         move_to_hunting_spot()
         start_auto_hunt()
-        # 필요시 wait 또는 break 넣기
-        wait(600)  # 10분마다 루프 또는 조건에 따라 종료
+    update_status('N')
+    print("작동완료")
+
 
 # === 기능 구현 자리 (좌표 기반 구현 필요) ===
 def wake_up_if_sleep_mode():
     if(image_exists_at_region('./images/절전모드.png', region)):
         mouse_drag(*coords["드레그시작"], *coords["드레그끝"])
-    pass
+    time.sleep(1)
 
 def ensure_in_game_mode():
     if(image_exists_at_region('./images/ingame.png', region)):
@@ -502,7 +505,7 @@ def retrieve_hunting_equipment():
 def move_to_hunting_spot():
     
     click(coords["은총의 순간이동"])
-    click(coords["은총 첫번쨰 사냥터"])
+    click(coords["은총첫번쨰사냥터"])
 
 
 def start_auto_hunt():
