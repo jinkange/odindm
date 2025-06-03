@@ -1,13 +1,15 @@
-import win32gui
-import win32con
-import time
-import pyautogui
-import cv2
-import numpy as np
-import random
-from PIL import ImageGrab
-import os
-import subprocess
+try:
+    import win32gui
+    import win32con
+    import time
+    import pyautogui
+    import cv2
+    import numpy as np
+    import random
+    from PIL import ImageGrab
+    import os
+except Exception as e:
+    print(e)
 STATUS_FILE = "status.txt"
 
 
@@ -335,7 +337,7 @@ def main():
 
 # === 기능 구현 자리 (좌표 기반 구현 필요) ===
 def wake_up_if_sleep_mode():
-    if(image_exists_at_region('./images/절전모드.png', region)):
+    if(image_exists_at_region('./images/juljun.png', region)):
         mouse_drag(*coords["드레그시작"], *coords["드레그끝"])
     time.sleep(1)
 
@@ -360,7 +362,7 @@ def in_game_waiting():
         time.sleep(1)
         
 def move_to_character_select_screen():
-    if(not image_exists_at_region('./images/메뉴창켜짐확인.png', region)):
+    if(not image_exists_at_region('./images/menucheck.png', region)):
         click(coords["메뉴"])
     
     click(coords["메뉴-캐릭터변경"])
@@ -368,7 +370,7 @@ def move_to_character_select_screen():
 
 def move_to_character_slot(index):
     while True:
-        if(image_exists_at_region('./images/캐릭터선택화면.png', region)):
+        if(image_exists_at_region('./images/charactercheck.png', region)):
             break
         time.sleep(1)
         
@@ -378,7 +380,7 @@ def move_to_character_slot(index):
     in_game_waiting()
     
 def has_dungeon_time():
-    if(not image_exists_at_region('./images/메뉴창켜짐확인.png', region)):
+    if(not image_exists_at_region('./images/menucheck.png', region)):
         click(coords["메뉴"])
     click(coords["메뉴-던전"])
     click(coords["정예던전"])
@@ -386,10 +388,10 @@ def has_dungeon_time():
     scroll_on_window(*coords["정예던전스크롤위치"], -1500)
     time.sleep(1)
     
-    if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
+    if(not image_exists_at_region('./images/nanend.png', region)):
         click(coords["메뉴"])
         return True
-    if(not image_exists_at_region('./images/공허의유적소모.png', region)):
+    if(not image_exists_at_region('./images/gonghuend.png', region)):
         click(coords["메뉴"])
         return True
     click(coords["메뉴"])
@@ -397,38 +399,38 @@ def has_dungeon_time():
 
 def has_items():
     click(coords["장비창"])
-    if(not image_exists_at_region('./images/장비 미장착확인1.png', region)):
+    if(not image_exists_at_region('./images/jangbeno1.png', region)):
         click(coords["메뉴"])
         return True
-    if(not image_exists_at_region('./images/장비 미장착확인2.png', region)):
+    if(not image_exists_at_region('./images/jangbeno2.png', region)):
         click(coords["메뉴"])
         return True
     click(coords["메뉴"])
     return False
 
 def enter_dungeon_and_auto_hunt():
-    if(not image_exists_at_region('./images/메뉴창켜짐확인.png', region)):
+    if(not image_exists_at_region('./images/menucheck.png', region)):
         click(coords["메뉴"])
     click(coords["메뉴-던전"])
     click(coords["정예던전"])
     scroll_on_window(*coords["정예던전스크롤위치"], -1500)
     time.sleep(1)
-    if(not image_exists_at_region('./images/난쟁이 비밀통로 소모.png', region)):
+    if(not image_exists_at_region('./images/nanend.png', region)):
         click(coords["난쟁이비밀통로"])
         click(coords["난쟁이비밀통로5단계"])
         click(coords["던전이동"])
         click(coords["던전이동확인팝업"])
         while True:
-            if(image_exists_at_region('./images/난쟁이5단계확인.png', region)):
+            if(image_exists_at_region('./images/nancheck.png', region)):
                 break
             time.sleep(1)
-    elif(not image_exists_at_region('./images/공허의유적소모.png', region)):
+    elif(not image_exists_at_region('./images/gonghuend.png', region)):
         click(coords["공허의유적"])
         click(coords["공허의유적5단계"])
         click(coords["던전이동"])
         click(coords["던전이동확인팝업"])    
         while True:
-            if(image_exists_at_region('./images/공허5단계확인.png', region)):
+            if(image_exists_at_region('./images/gonghu5.png', region)):
                 break
             time.sleep(1)
     
@@ -438,7 +440,7 @@ def enter_dungeon_and_auto_hunt():
     
     
 def is_out_of_dungeon():
-    return image_exists_at_region('./images/던전끝 확인.png', region)
+    return image_exists_at_region('./images/dunendcheck.png', region)
 
 def return_to_town():
     click(coords["마을귀환"])
@@ -452,7 +454,7 @@ def return_to_town():
 def open_storage():
     click(coords["창고바로가기"])
     while True:
-        if(image_exists_at_region('./images/창고확인.png', region)):
+        if(image_exists_at_region('./images/storecheck.png', region)):
             break
         time.sleep(1)
 
@@ -466,10 +468,10 @@ def retrieve_and_equip_equipment():
     click(coords["장비창"])
     click(coords["자동장착"])
     time.sleep(1)
-    if(image_exists_at_region('./images/장비 미장착확인1.png', region)):
+    if(image_exists_at_region('./images/jangbeno1.png', region)):
         click(coords["메뉴"])
         return False
-    if(image_exists_at_region('./images/장비 미장착확인2.png', region)):
+    if(image_exists_at_region('./images/jangbeno2.png', region)):
         click(coords["메뉴"])
         return False
     click(coords["메뉴"])
@@ -480,7 +482,7 @@ def stop_macro(reason):
 
 def unequip_all():
     click(coords["장비창"])
-    if(image_exists_at_region('./images/장비모두해제.png', region)):
+    if(image_exists_at_region('./images/jangunset.png', region)):
         click(coords["모두해제버튼"])
     click(coords["메뉴"])
 
@@ -500,7 +502,7 @@ def retrieve_hunting_equipment():
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
     click(coords["장비창"])
-    if(image_exists_at_region('./images/자동장착.png', region)):
+    if(image_exists_at_region('./images/autose.png', region)):
         click(coords["자동장착"])
     click(coords["메뉴"])
 
