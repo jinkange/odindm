@@ -427,7 +427,7 @@ def enter_dungeon_and_auto_hunt():
     elif(not image_exists_at_region('./images/gonghuend.png', region)):
         click(coords["공허의유적"])
         click(coords["공허의유적5단계"])
-        click(coords["던전이동"])
+        click(coords["던전이동"]) 
         click(coords["던전이동확인팝업"])    
         while True:
             if(image_exists_at_region('./images/gonghu5.png', region)):
