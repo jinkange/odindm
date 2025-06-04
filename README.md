@@ -108,5 +108,8 @@
             # 185 351
             
 
-pyinstaller --onefile --hidden-import=cv2 odin_1번.py 
-pyinstaller --onefile --hidden-import=cv2 odin_2번.py 
+pyinstaller --onefile --hidden-import=cv2 odin_1번.py
+pyinstaller --onefile --hidden-import=cv2 odin_2번.py
+
+pip freeze > requirements.txt
+pip install -r requirements.txt

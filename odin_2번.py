@@ -1,16 +1,52 @@
-try:
-    import win32gui
-    import win32con
-    import time
-    import pyautogui
-    import cv2
-    import numpy as np
-    import random
-    from PIL import ImageGrab
-    import os
-except Exception as e:
-    print(e)
+import win32gui
+import win32con
+import time
+import pyautogui
+import cv2
+import numpy as np
+import random
+from PIL import ImageGrab
+import os
+import datetime
+import time
+import re
 
+def wait_until_time():
+    while True:
+        user_input = input("매크로 실행 시간을 입력하세요 (예: 16:47 또는 엔터로 바로 실행): ").strip()
+
+        if not user_input:
+            print("입력 없음. 매크로 실행.")
+            return
+
+        # 형식 검사: HH:MM, H:M 등 허용
+        match = re.match(r"^(\d{1,2}):(\d{1,2})$", user_input)
+        if not match:
+            print("⚠️ 유효하지 않은 형식입니다. 예: 3:7 또는 16:47")
+            continue
+
+        hour, minute = int(match.group(1)), int(match.group(2))
+        if not (0 <= hour <= 23 and 0 <= minute <= 59):
+            print("⚠️ 시간은 0~23, 분은 0~59 사이여야 합니다.")
+            continue
+
+        # 유효한 시간 형식이 입력되었을 경우
+        break
+
+    # 현재 시각과 비교하여 대기
+    now = datetime.datetime.now()
+    target_time = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    if now >= target_time:
+        target_time += datetime.timedelta(days=1)
+
+    print(f"⏳ {target_time.strftime('%H:%M')}까지 대기 중...")
+
+    while datetime.datetime.now() < target_time:
+        time.sleep(1)
+
+    print("✅ 시간 도달. 매크로 실행 시작")
+    
+wait_until_time()
 STATUS_FILE = "status.txt"
 
 
@@ -247,24 +283,26 @@ def move_resize_window(hwnd, x, y, width, height):
     """창 위치와 크기 조절"""
     win32gui.MoveWindow(hwnd, x, y, width, height, True)
     
-odin_windows = get_sorted_odin_windows()
-console_windows = enum_windows_by_title("odin_2번")
-
-odin_windows = get_sorted_odin_windows()
-
-if len(odin_windows) >= 2:
-    move_resize_window(odin_windows[0], 0, 0, 960, 540)# 왼쪽
-    move_resize_window(odin_windows[1], 960, 0, 960, 540)# 오른쪽
-    move_resize_window(console_windows[0], 960, 550, 960, 200)
-    print("ODIN 창 위치 조정 완료")
-
-
 
 MAX_CHARACTERS = 5
 current_char_index = 0
 
 def main():    
-    
+    odin_windows = get_sorted_odin_windows()
+    console_windows = enum_windows_by_title("odin_2번")
+
+    odin_windows = get_sorted_odin_windows()
+
+    if len(odin_windows) >= 2:
+        move_resize_window(odin_windows[0], 0, 0, 960, 540)# 왼쪽
+        move_resize_window(odin_windows[1], 960, 0, 960, 540)# 오른쪽
+        move_resize_window(console_windows[0], 960, 550, 960, 200)
+        print("ODIN 창 위치 조정 완료")
+    else:
+        print("ODIN 창 2개 못찾음 종료")
+        return
+
+
     isFine = True
     isNext = False
     isDone = False
