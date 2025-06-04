@@ -288,7 +288,7 @@ def move_resize_window(hwnd, x, y, width, height):
 
 MAX_CHARACTERS = 5
 current_char_index = 0
-
+pyautogui.FAILSAFE = False
 def main():
     odin_windows = get_sorted_odin_windows()
     console_windows = enum_windows_by_title("odin_1번")
@@ -318,7 +318,7 @@ def main():
                 update_status('Y')
                 break
             time.sleep(1)
-        print("매크로 작동 시작")
+        print("매크로 작동 시작. 마우스 작동시 매크로 미동작.")
         wake_up_if_sleep_mode()
         click(coords["메뉴"])
         click(coords["메뉴"])
