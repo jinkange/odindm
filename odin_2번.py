@@ -293,14 +293,10 @@ def main():
 
     odin_windows = get_sorted_odin_windows()
 
-    if len(odin_windows) >= 2:
-        move_resize_window(odin_windows[0], 0, 0, 960, 540)# 왼쪽
+    if len(odin_windows) >= 1:
         move_resize_window(odin_windows[1], 960, 0, 960, 540)# 오른쪽
         move_resize_window(console_windows[0], 960, 550, 960, 200)
         print("ODIN 창 위치 조정 완료")
-    else:
-        print("ODIN 창 2개 못찾음 종료")
-        return
 
 
     isFine = True
@@ -498,7 +494,7 @@ def open_storage():
 def retrieve_and_equip_equipment():
     for pos in coords["창고아이템"]:
         pyautogui.click(*pos)
-        time.sleep(0.1)
+        time.sleep(0.2)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
@@ -526,7 +522,7 @@ def unequip_all():
 def store_equipment():
     for pos in coords["인벤토리아이템"]:
         pyautogui.click(*pos)
-        time.sleep(0.1)
+        time.sleep(0.2)
     time.sleep(1)
     click(coords["창고보관버튼"])
     click(coords["메뉴"])
@@ -534,7 +530,7 @@ def store_equipment():
 def retrieve_hunting_equipment():
     for pos in coords["창고아이템"]:
         pyautogui.click(*pos)
-        time.sleep(0.1)
+        time.sleep(0.2)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
