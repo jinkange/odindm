@@ -45,9 +45,12 @@ def wait_until_time():
         time.sleep(1)
 
     print("✅ 시간 도달. 매크로 실행 시작")
-    
-wait_until_time()
-STATUS_FILE = "status.txt"
+try:
+    wait_until_time()
+except Exception as e:
+    print(e)
+    input()
+    STATUS_FILE = "status.txt"
 
 
 # 파일이 없으면 기본 Y로 생성
@@ -193,6 +196,8 @@ coords = {
     "창고보관버튼": (1841, 508),
     "창고꺼내기버튼": (1130, 506),
     "자동장착": (1862, 511),
+    "절전모드": (985,268),
+    "작은움직임": (1503,326),
     "인벤토리아이템": [
         (1690, 125), (1738, 125), (1783, 125), (1829, 125), (1880, 125),
         (1690, 174), (1738, 174), (1783, 174), (1829, 174), (1880, 174),
@@ -319,8 +324,11 @@ def main():
         wake_up_if_sleep_mode()
         click(coords["메뉴"])
         click(coords["메뉴"])
-        move_to_character_select_screen()
-        move_to_character_slot(current_char_index)
+        while True:
+            move_to_character_select_screen()
+            if(move_to_character_slot(current_char_index)):
+                break
+            
         while isNext:
             if has_dungeon_time(): #3.1
             # if not has_dungeon_time(): #3.1 던전 시간있어도 없게 테스트
@@ -359,8 +367,10 @@ def main():
                         break  # 모든 캐릭터 순회 완료
     # 5번째 캐릭터까지 완료 후 루프
     if(isFine):
-        move_to_character_select_screen()
-        move_to_character_slot(1)
+        while True:
+            move_to_character_select_screen()
+            if(move_to_character_slot(current_char_index)):
+                break
         open_storage()
         retrieve_hunting_equipment()
         move_to_hunting_spot()
@@ -402,15 +412,24 @@ def move_to_character_select_screen():
     click(coords["팝업확인"])
 
 def move_to_character_slot(index):
+    i=0
     while True:
         if(image_exists_at_region('./images/charactercheck.png', region)):
             break
+        i += 1
+        if(i > 60):
+            i=1
+            break
         time.sleep(1)
         
+    if(i==1):
+        print(f"캐릭터창 찾기 실패로 이동")    
+        return False
     print(f"{index}번째 캐릭터로 이동")
     click(coords[f"{index}번"])
     click(coords["게임시작"])
     in_game_waiting()
+    return True
     
 def has_dungeon_time():
     if(not image_exists_at_region('./images/menucheck.png', region)):
@@ -442,33 +461,88 @@ def has_items():
     return False
 
 def enter_dungeon_and_auto_hunt():
-    if(not image_exists_at_region('./images/menucheck.png', region)):
-        click(coords["메뉴"])
-    click(coords["메뉴-던전"])
-    click(coords["정예던전"])
-    scroll_on_window(*coords["정예던전스크롤위치"], -1500)
-    time.sleep(1)
-    if(not image_exists_at_region('./images/nanend.png', region)):
-        click(coords["난쟁이비밀통로"])
-        click(coords["난쟁이비밀통로5단계"])
-        click(coords["던전이동"])
-        click(coords["던전이동확인팝업"])
-        while True:
-            if(image_exists_at_region('./images/nancheck.png', region)):
-                break
+    isAutoPlay = True
+    while True:
+        if(not image_exists_at_region('./images/menucheck.png', region)):
+            click(coords["메뉴"])
+        click(coords["메뉴-던전"])
+        
+        if(image_exists_at_region('./images/isdungeon.png', region)):
+            click(coords["정예던전"])
             time.sleep(1)
-    elif(not image_exists_at_region('./images/gonghuend.png', region)):
-        click(coords["공허의유적"])
-        click(coords["공허의유적5단계"])
-        click(coords["던전이동"])
-        click(coords["던전이동확인팝업"])    
-        while True:
-            if(image_exists_at_region('./images/gonghu5.png', region)):
-                break
+            scroll_on_window(*coords["정예던전스크롤위치"], -1500)
             time.sleep(1)
-    
-    click(coords["자동사냥"])
-    click(coords["순간이동"])
+        else:
+            click(coords["메뉴"])
+            click(coords["메뉴"])
+            click(coords["메뉴"])
+            click(coords["메뉴"])
+            continue
+        
+        
+        if(not image_exists_at_region('./images/nanend.png', region)):
+            click(coords["난쟁이비밀통로"])
+            click(coords["난쟁이비밀통로"])
+            click(coords["난쟁이비밀통로5단계"])
+            click(coords["난쟁이비밀통로5단계"])
+            click(coords["던전이동"])
+            click(coords["던전이동확인팝업"])
+            i = 0
+            while True:
+                if(image_exists_at_region('./images/nancheck.png', region)):
+                    break
+                i += 1
+                if(i > 60):
+                    i = 1
+                    break
+                time.sleep(1)
+        elif(not image_exists_at_region('./images/gonghuend.png', region)):
+            click(coords["공허의유적"])
+            click(coords["공허의유적"])
+            click(coords["공허의유적5단계"])
+            click(coords["공허의유적5단계"])
+            click(coords["던전이동"]) 
+            click(coords["던전이동확인팝업"])    
+            i = 0
+            while True:
+                if(image_exists_at_region('./images/nancheck.png', region)):
+                    break
+                i += 1
+                if(i > 60):
+                    i = 1
+                    break
+                time.sleep(1)
+        if(i!=1): 
+            while True:
+                click(coords["자동사냥"])
+                click(coords["순간이동"])
+                while True:
+                    if(image_exists_at_region('./images/ingame.png', region)):
+                        break
+                    time.sleep(1)
+                    
+                click(coords["작은움직임"])
+                click(coords["절전모드"])
+                i = 0
+                while True:
+                    if(image_exists_at_region('./images/nonplaying.png', region)):
+                        isAutoPlay = False
+                        break
+                    i += 1
+                    if(i > 10):
+                        isAutoPlay = True
+                        break
+                    time.sleep(1)
+                #자동사냥중이아님
+                if(not isAutoPlay):
+                    wake_up_if_sleep_mode()
+                    time.sleep(3)
+                    continue
+                else:
+                    break
+            break
+            
+        
     
     
     
