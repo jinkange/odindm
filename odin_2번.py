@@ -290,11 +290,11 @@ current_char_index = 0
 pyautogui.FAILSAFE = False
 def main():
     odin_windows = get_sorted_odin_windows()
-    console_windows = enum_windows_by_title("odin_1번")
+    console_windows = enum_windows_by_title("odin_2번")
 
     if len(odin_windows) >= 1:
-        move_resize_window(odin_windows[0], 0, 0, 960, 540)# 왼쪽
-        move_resize_window(console_windows[0], 0, 550, 960, 200)
+        move_resize_window(odin_windows[1], 960, 0, 960, 540)# 오른쪽
+        move_resize_window(console_windows[0], 960, 550, 960, 200)
         print("ODIN 창 위치 조정 완료")
     try:
         wait_until_time()
