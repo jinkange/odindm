@@ -15,10 +15,10 @@ except Exception as e:
     print(e)
 def wait_until_time():
     while True:
-        user_input = input("매크로 실행 시간을 입력하세요 (예: 16:47 또는 엔터로 바로 실행): ").strip()
+        user_input = input("실행 시간을 입력하세요 (예: 16:47 또는 엔터로 바로 실행): ").strip()
 
         if not user_input:
-            print("입력 없음. 매크로 실행.")
+            print("입력 없음. 실행.")
             return
 
         # 형식 검사: HH:MM, H:M 등 허용
@@ -46,12 +46,8 @@ def wait_until_time():
     while datetime.datetime.now() < target_time:
         time.sleep(1)
 
-    print("✅ 시간 도달. 매크로 실행 시작")
-try:
-    wait_until_time()
-except Exception as e:
-    print(e)
-    input()
+    print("✅ 시간 도달. 실행 시작")
+
 STATUS_FILE = "status.txt"
 
 
@@ -292,7 +288,7 @@ def move_resize_window(hwnd, x, y, width, height):
     """창 위치와 크기 조절"""
     win32gui.MoveWindow(hwnd, x, y, width, height, True)
 
-MAX_CHARACTERS = 1
+MAX_CHARACTERS = 5
 current_char_index = 0
 pyautogui.FAILSAFE = False
 def main():
@@ -303,7 +299,11 @@ def main():
         move_resize_window(odin_windows[0], 0, 0, 960, 540)# 왼쪽
         move_resize_window(console_windows[0], 0, 550, 960, 200)
         print("ODIN 창 위치 조정 완료")
-    
+    try:
+        wait_until_time()
+    except Exception as e:
+        print(e)
+        input()
     isFine = True
     isNext = False
     isDone = False
@@ -312,15 +312,15 @@ def main():
         if(isDone): break
         isNext = True
         current_char_index = i + 1
-        # 매크로 실행 루프
-        print("매크로 작동 대기")
+        # 실행 루프
+        print("작동 대기")
         while True:
             status = read_status()
             if status == "N":
                 update_status('Y')
                 break
             time.sleep(1)
-        print("매크로 작동 시작. 마우스 작동시 매크로 미동작.")
+        print("작동 시작. 마우스 작동시 미동작.")
         wake_up_if_sleep_mode()
         click(coords["메뉴"])
         click(coords["메뉴"])
@@ -345,8 +345,8 @@ def main():
                     if retrieve_and_equip_equipment():
                         continue  # 다시 3.1로
                     else:
-                        #아이템 없음 찾기실패 매크로 종료
-                        print("아이템 찾기 실패 매크로 종료")
+                        #아이템 없음 찾기실패 종료
+                        print("아이템 찾기 실패 종료")
                         isFine = False
                         break
                 
@@ -380,6 +380,7 @@ def main():
         
     update_status('N')
     print("작동완료")
+    input("")
 
 # === 기능 구현 자리 (좌표 기반 구현 필요) ===
 def wake_up_if_sleep_mode():
@@ -647,7 +648,7 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("매크로가 종료되었습니다. (Ctrl+C)")
+        print("종료되었습니다. (Ctrl+C)")
 
     finally:
         update_status("N")
