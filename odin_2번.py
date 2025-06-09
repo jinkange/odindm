@@ -215,7 +215,7 @@ coords = {
     ]
 }
 
-def image_exists_at_region(template_path, region, threshold=0.95):
+def image_exists_at_region(template_path, region, threshold=0.93):
     """
     template_path: 찾을 이미지 파일 경로
     region: (x, y, width, height)1281 631
