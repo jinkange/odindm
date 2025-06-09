@@ -370,7 +370,7 @@ def main():
     if(isFine):
         while True:
             move_to_character_select_screen()
-            if(move_to_character_slot(current_char_index)):
+            if(move_to_character_slot(1)):
                 break
         open_storage()
         retrieve_hunting_equipment()
@@ -414,16 +414,18 @@ def move_to_character_select_screen():
 
 def move_to_character_slot(index):
     i=0
+    isFailedCharacter = False
     while True:
         if(image_exists_at_region('./images/charactercheck.png', region)):
             break
         i += 1
         if(i > 60):
+            isFailedCharacter = True
             i=1
             break
         time.sleep(1)
         
-    if(i==1):
+    if(isFailedCharacter):
         print(f"캐릭터창 찾기 실패로 이동")    
         return False
     print(f"{index}번째 캐릭터로 이동")
@@ -463,6 +465,8 @@ def has_items():
 
 def enter_dungeon_and_auto_hunt():
     isAutoPlay = True
+    isFailed1 = False
+    isFailed2 = False
     while True:
         if(not image_exists_at_region('./images/menucheck.png', region)):
             click(coords["메뉴"])
@@ -494,7 +498,7 @@ def enter_dungeon_and_auto_hunt():
                     break
                 i += 1
                 if(i > 60):
-                    i = 1
+                    isFailed2 = True
                     break
                 time.sleep(1)
         elif(not image_exists_at_region('./images/gonghuend.png', region)):
@@ -510,10 +514,10 @@ def enter_dungeon_and_auto_hunt():
                     break
                 i += 1
                 if(i > 60):
-                    i = 1
+                    isFailed1 = True
                     break
                 time.sleep(1)
-        if(i!=1): 
+        if(not isFailed2 and not isFailed1): 
             while True:
                 click(coords["자동사냥"])
                 click(coords["순간이동"])
