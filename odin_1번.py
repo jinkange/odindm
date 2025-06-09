@@ -461,6 +461,7 @@ def has_dungeon_time():
 
 def has_items():
     click(coords["장비창"])
+    time.sleep(1)
     if(not image_exists_at_region('./images/jangbeno1.png', region)):
         click(coords["메뉴"])
         return True
@@ -478,7 +479,7 @@ def enter_dungeon_and_auto_hunt():
         if(not image_exists_at_region('./images/menucheck.png', region)):
             click(coords["메뉴"])
         click(coords["메뉴-던전"])
-        
+        time.sleep(1)
         if(image_exists_at_region('./images/isdungeon.png', region)):
             click(coords["정예던전"])
             time.sleep(1)
