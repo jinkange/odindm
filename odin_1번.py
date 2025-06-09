@@ -564,11 +564,19 @@ def return_to_town():
         time.sleep(1)
 
 def open_storage():
+    isFailedStore = False
+    i = 0
     click(coords["창고바로가기"])
     while True:
         if(image_exists_at_region('./images/storecheck.png', region)):
             break
-        time.sleep(1)
+        i += 1
+        if (i>30):
+            isFailedStore = True
+            break
+    
+    time.sleep(1)
+    return False
 
 def retrieve_and_equip_equipment():
     for pos in coords["창고아이템"]:

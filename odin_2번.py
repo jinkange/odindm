@@ -288,23 +288,19 @@ def move_resize_window(hwnd, x, y, width, height):
 MAX_CHARACTERS = 5
 current_char_index = 0
 pyautogui.FAILSAFE = False
-def main():    
+def main():
     odin_windows = get_sorted_odin_windows()
-    console_windows = enum_windows_by_title("odin_2번")
-
-    odin_windows = get_sorted_odin_windows()
+    console_windows = enum_windows_by_title("odin_1번")
 
     if len(odin_windows) >= 1:
-        move_resize_window(odin_windows[1], 960, 0, 960, 540)# 오른쪽
-        move_resize_window(console_windows[0], 960, 550, 960, 200)
+        move_resize_window(odin_windows[0], 0, 0, 960, 540)# 왼쪽
+        move_resize_window(console_windows[0], 0, 550, 960, 200)
         print("ODIN 창 위치 조정 완료")
-
     try:
         wait_until_time()
     except Exception as e:
         print(e)
         input()
-
     isFine = True
     isNext = False
     isDone = False
@@ -325,6 +321,7 @@ def main():
         wake_up_if_sleep_mode()
         click(coords["메뉴"])
         click(coords["메뉴"])
+        # ensure_in_game_mode()
         while True:
             move_to_character_select_screen()
             if(move_to_character_slot(current_char_index)):
@@ -362,6 +359,7 @@ def main():
                         print("캐릭터 작업완료")
                         update_status('N')
                         isNext = False
+                        break
                     else:
                         print("모든 캐릭터 작업완료")
                         isDone = True
@@ -376,10 +374,10 @@ def main():
         retrieve_hunting_equipment()
         move_to_hunting_spot()
         start_auto_hunt()
+        
     update_status('N')
     print("작동완료")
     input("")
-
 # === 기능 구현 자리 (좌표 기반 구현 필요) ===
 def wake_up_if_sleep_mode():
     if(image_exists_at_region('./images/juljun.png', region)):
@@ -455,9 +453,11 @@ def has_dungeon_time():
 def has_items():
     click(coords["장비창"])
     if(not image_exists_at_region('./images/jangbeno1.png', region)):
+        #장비가 있음
         click(coords["메뉴"])
         return True
     if(not image_exists_at_region('./images/jangbeno2.png', region)):
+        #장비가 있음
         click(coords["메뉴"])
         return True
     click(coords["메뉴"])
