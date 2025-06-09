@@ -164,6 +164,7 @@ coords = {
     ]
 }
 
+# #2번매크로
 # region = (960, 0, 960, 540)
 # coords = {
 #     "드레그시작": (1432,263),
@@ -197,6 +198,8 @@ coords = {
 #     "창고보관버튼": (1841, 508),
 #     "창고꺼내기버튼": (1130, 506),
 #     "자동장착": (1862, 511),
+#     "절전모드": (985,268),
+#     "작은움직임": (1503,326),
 #     "인벤토리아이템": [
 #         (1690, 125), (1738, 125), (1783, 125), (1829, 125), (1880, 125),
 #         (1690, 174), (1738, 174), (1783, 174), (1829, 174), (1880, 174),
@@ -293,11 +296,14 @@ current_char_index = 0
 pyautogui.FAILSAFE = False
 def main():
     odin_windows = get_sorted_odin_windows()
-    console_windows = enum_windows_by_title("odin_1번")
+    console_windows = enum_windows_by_title("odin_1번")# 1번
+    # console_windows = enum_windows_by_title("odin_2번")# 2번
 
     if len(odin_windows) >= 1:
-        move_resize_window(odin_windows[0], 0, 0, 960, 540)# 왼쪽
-        move_resize_window(console_windows[0], 0, 550, 960, 200)
+        move_resize_window(odin_windows[0], 0, 0, 960, 540)# 1번
+        move_resize_window(console_windows[0], 0, 550, 960, 200)# 1번
+        # move_resize_window(odin_windows[1], 960, 0, 960, 540)# 2번
+        # move_resize_window(console_windows[0], 960, 550, 960, 200) #2번
         print("ODIN 창 위치 조정 완료")
     try:
         wait_until_time()
@@ -564,19 +570,11 @@ def return_to_town():
         time.sleep(1)
 
 def open_storage():
-    isFailedStore = False
-    i = 0
     click(coords["창고바로가기"])
     while True:
         if(image_exists_at_region('./images/storecheck.png', region)):
             break
-        i += 1
-        if (i>30):
-            isFailedStore = True
-            break
-    
     time.sleep(1)
-    return False
 
 def retrieve_and_equip_equipment():
     for pos in coords["창고아이템"]:

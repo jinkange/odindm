@@ -1,16 +1,18 @@
-import win32gui
-import win32con
-import time
-import pyautogui
-import cv2
-import numpy as np
-import random
-from PIL import ImageGrab
-import os
-import datetime
-import time
-import re
-
+try:
+    import win32gui
+    import win32con
+    import time
+    import pyautogui
+    import cv2
+    import numpy as np
+    import random
+    from PIL import ImageGrab
+    import os
+    import datetime
+    import time
+    import re
+except Exception as e:
+    print(e)
 def wait_until_time():
     while True:
         user_input = input("실행 시간을 입력하세요 (예: 16:47 또는 엔터로 바로 실행): ").strip()
@@ -65,6 +67,7 @@ def update_status(new_status):
     with open(STATUS_FILE, "w") as f:
         f.write(new_status)
         
+
 init_status_file()
 
 
@@ -110,12 +113,12 @@ def click_image(image_path, confidence=0.8):
 def scroll_on_window(x, y, amount):
     pyautogui.moveTo(x, y)
     pyautogui.scroll(amount)  # 양수: 위로, 음수: 아래로
-
+##1반매크로
 # region = (0, 0, 960, 540)
 # coords = {
 #     "메뉴": (923, 43),
-#"드레그시작": (472,263),
-#"드레그끝": (763,252,)
+# "드레그시작": (472,263),
+#     "드레그끝": (763,252),
 #     "메뉴-캐릭터변경": (798,364),
 #     "1번": (838, 79),
 #     "2번": (840, 152),
@@ -144,6 +147,8 @@ def scroll_on_window(x, y, amount):
 #     "창고보관버튼": (881,508),
 #     "창고꺼내기버튼": (170,506),
 #     "자동장착": (902,511),
+#     "절전모드": (25,268),
+#     "작은움직임": (543,326),
 #     "인벤토리아이템": [
 #         (730, 125), (778, 125), (823, 125), (869, 125), (920, 125),
 #         (730, 174), (778, 174), (823, 174), (869, 174), (920, 174),
@@ -159,6 +164,7 @@ def scroll_on_window(x, y, amount):
 #     ]
 # }
 
+#2번매크로
 region = (960, 0, 960, 540)
 coords = {
     "드레그시작": (1432,263),
@@ -267,9 +273,10 @@ def get_sorted_odin_windows():
     odin_windows = sorted(odin_windows, key=lambda hwnd: get_window_rect(hwnd)[0])  # 좌측 기준 정렬
     return odin_windows
 
-##
-##화면조정
-##
+###
+###창조절#
+###
+# 콘솔창: 이름이 "odin_1번"인 창 찾기
 
 def enum_windows_by_title(title):
     """특정 창 제목과 일치하는 핸들을 반환"""
@@ -283,18 +290,20 @@ def enum_windows_by_title(title):
 def move_resize_window(hwnd, x, y, width, height):
     """창 위치와 크기 조절"""
     win32gui.MoveWindow(hwnd, x, y, width, height, True)
-    
 
 MAX_CHARACTERS = 5
 current_char_index = 0
 pyautogui.FAILSAFE = False
 def main():
     odin_windows = get_sorted_odin_windows()
-    console_windows = enum_windows_by_title("odin_2번")
+    # console_windows = enum_windows_by_title("odin_1번")# 1번
+    console_windows = enum_windows_by_title("odin_2번")# 2번
 
     if len(odin_windows) >= 1:
-        move_resize_window(odin_windows[1], 960, 0, 960, 540)# 오른쪽
-        move_resize_window(console_windows[0], 960, 550, 960, 200)
+        # move_resize_window(odin_windows[0], 0, 0, 960, 540)# 1번
+        # move_resize_window(console_windows[0], 0, 550, 960, 200)# 1번
+        move_resize_window(odin_windows[1], 960, 0, 960, 540)# 2번
+        move_resize_window(console_windows[0], 960, 550, 960, 200) #2번
         print("ODIN 창 위치 조정 완료")
     try:
         wait_until_time()
@@ -378,6 +387,7 @@ def main():
     update_status('N')
     print("작동완료")
     input("")
+
 # === 기능 구현 자리 (좌표 기반 구현 필요) ===
 def wake_up_if_sleep_mode():
     if(image_exists_at_region('./images/juljun.png', region)):
@@ -385,9 +395,10 @@ def wake_up_if_sleep_mode():
     time.sleep(1)
 
 def ensure_in_game_mode():
-    if(image_exists_at_region('./images/ingame.png', region)):
-        return True
-    else: return False
+    while True:
+        if(image_exists_at_region('./images/ingame.png', region)):
+            break
+        time.sleep(1)
     
 def in_game_waiting():
     while True:
@@ -419,7 +430,6 @@ def move_to_character_slot(index):
         i += 1
         if(i > 60):
             isFailedCharacter = True
-            i=1
             break
         time.sleep(1)
         
@@ -431,7 +441,6 @@ def move_to_character_slot(index):
     click(coords["게임시작"])
     in_game_waiting()
     return True
-    
 def has_dungeon_time():
     if(not image_exists_at_region('./images/menucheck.png', region)):
         click(coords["메뉴"])
@@ -453,11 +462,9 @@ def has_dungeon_time():
 def has_items():
     click(coords["장비창"])
     if(not image_exists_at_region('./images/jangbeno1.png', region)):
-        #장비가 있음
         click(coords["메뉴"])
         return True
     if(not image_exists_at_region('./images/jangbeno2.png', region)):
-        #장비가 있음
         click(coords["메뉴"])
         return True
     click(coords["메뉴"])
@@ -498,7 +505,7 @@ def enter_dungeon_and_auto_hunt():
                     break
                 i += 1
                 if(i > 60):
-                    isFailed2 = True
+                    isFailed1 = True
                     break
                 time.sleep(1)
         elif(not image_exists_at_region('./images/gonghuend.png', region)):
@@ -514,7 +521,7 @@ def enter_dungeon_and_auto_hunt():
                     break
                 i += 1
                 if(i > 60):
-                    isFailed1 = True
+                    isFailed2 = True
                     break
                 time.sleep(1)
         if(not isFailed2 and not isFailed1): 
@@ -549,8 +556,7 @@ def enter_dungeon_and_auto_hunt():
             
         
     
-    
-    
+
 def is_out_of_dungeon():
     return image_exists_at_region('./images/dunendcheck.png', region)
 
@@ -568,7 +574,7 @@ def open_storage():
     while True:
         if(image_exists_at_region('./images/storecheck.png', region)):
             break
-        time.sleep(1)
+    time.sleep(1)
 
 def retrieve_and_equip_equipment():
     for pos in coords["창고아이템"]:
@@ -646,7 +652,6 @@ def click(pos):
 def wait(seconds):
     import time
     time.sleep(seconds)
-
 # === 시작 ===
 if __name__ == "__main__":
     try:
