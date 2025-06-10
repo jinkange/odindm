@@ -518,7 +518,7 @@ def enter_dungeon_and_auto_hunt():
             click(coords["던전이동확인팝업"])    
             i = 0
             while True:
-                if(image_exists_at_region('./images/nancheck.png', region)):
+                if(image_exists_at_region('./images/gonghu5.png', region)):
                     isFailed1 = False
                     break
                 i += 1
@@ -572,11 +572,22 @@ def return_to_town():
         time.sleep(1)
 
 def open_storage():
-    click(coords["창고바로가기"])
+    i = 0
+    isOpenStorage = True
     while True:
-        if(image_exists_at_region('./images/storecheck.png', region)):
+        click(coords["창고바로가기"])
+        while True:
+            if(image_exists_at_region('./images/storecheck.png', region)):
+                isOpenStorage = True
+                break
+            i += 1
+            if(i > 60):
+                i = 0
+                isOpenStorage = False
+                break
+            time.sleep(1)
+        if(isOpenStorage):
             break
-    time.sleep(1)
 
 def retrieve_and_equip_equipment():
     for pos in coords["창고아이템"]:
