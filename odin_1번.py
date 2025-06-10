@@ -331,6 +331,7 @@ def main():
         click(coords["메뉴"])
         click(coords["메뉴"])
         # ensure_in_game_mode()
+        time.sleep(1)
         while True:
             move_to_character_select_screen()
             if(move_to_character_slot(current_char_index)):
@@ -400,6 +401,20 @@ def ensure_in_game_mode():
             break
         time.sleep(1)
     
+def in_game_check():
+    i = 0
+    while True:
+        if(image_exists_at_region('./images/ingame.png', region)):
+            break
+        time.sleep(1)
+        i += 1
+        if(i > 30):
+            i = 0
+            click(coords["메뉴"])
+            break
+        
+        
+        
 def in_game_waiting():
     while True:
         if(image_exists_at_region('./images/ingame.png', region)):
@@ -452,11 +467,14 @@ def has_dungeon_time():
     
     if(not image_exists_at_region('./images/nanend.png', region)):
         click(coords["메뉴"])
+        in_game_check()
         return True
     if(not image_exists_at_region('./images/gonghuend.png', region)):
         click(coords["메뉴"])
+        in_game_check()
         return True
     click(coords["메뉴"])
+    in_game_check()
     return False
 
 def has_items():
@@ -464,11 +482,14 @@ def has_items():
     time.sleep(1)
     if(not image_exists_at_region('./images/jangbeno1.png', region)):
         click(coords["메뉴"])
+        in_game_check()
         return True
     if(not image_exists_at_region('./images/jangbeno2.png', region)):
         click(coords["메뉴"])
+        in_game_check()
         return True
     click(coords["메뉴"])
+    in_game_check()
     return False
 
 def enter_dungeon_and_auto_hunt():
@@ -565,11 +586,7 @@ def is_out_of_dungeon():
 def return_to_town():
     click(coords["마을귀환"])
     click(coords["팝업확인"])
-    
-    while True:
-        if(image_exists_at_region('./images/ingame.png', region)):
-            break
-        time.sleep(1)
+    in_game_check()
 
 def open_storage():
     i = 0
@@ -582,6 +599,7 @@ def open_storage():
                 break
             i += 1
             if(i > 60):
+                i = 0
                 isOpenStorage = False
                 break
             time.sleep(1)
@@ -595,16 +613,20 @@ def retrieve_and_equip_equipment():
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
+    in_game_check()
     click(coords["장비창"])
     click(coords["자동장착"])
     time.sleep(1)
     if(image_exists_at_region('./images/jangbeno1.png', region)):
         click(coords["메뉴"])
+        in_game_check()
         return False
     if(image_exists_at_region('./images/jangbeno2.png', region)):
         click(coords["메뉴"])
+        in_game_check()
         return False
     click(coords["메뉴"])
+    in_game_check()
     return True
 
 def stop_macro(reason):
@@ -615,6 +637,7 @@ def unequip_all():
     if(image_exists_at_region('./images/jangunset.png', region)):
         click(coords["모두해제버튼"])
     click(coords["메뉴"])
+    in_game_check()
 
 def store_equipment():
     for pos in coords["인벤토리아이템"]:
@@ -623,6 +646,7 @@ def store_equipment():
     time.sleep(1)
     click(coords["창고보관버튼"])
     click(coords["메뉴"])
+    in_game_check()
 
 def retrieve_hunting_equipment():
     for pos in coords["창고아이템"]:
@@ -631,10 +655,12 @@ def retrieve_hunting_equipment():
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
+    in_game_check()
     click(coords["장비창"])
     if(image_exists_at_region('./images/autose.png', region)):
         click(coords["자동장착"])
     click(coords["메뉴"])
+    in_game_check()
 
 def move_to_hunting_spot():
     
