@@ -474,12 +474,11 @@ def has_items():
 def enter_dungeon_and_auto_hunt():
     isAutoPlay = True
     isFailed1 = False
-    isFailed2 = False
     while True:
         if(not image_exists_at_region('./images/menucheck.png', region)):
             click(coords["메뉴"])
         click(coords["메뉴-던전"])
-        time.sleep(1)
+        
         if(image_exists_at_region('./images/isdungeon.png', region)):
             click(coords["정예던전"])
             time.sleep(1)
@@ -503,6 +502,7 @@ def enter_dungeon_and_auto_hunt():
             i = 0
             while True:
                 if(image_exists_at_region('./images/nancheck.png', region)):
+                    isFailed1 = False
                     break
                 i += 1
                 if(i > 60):
@@ -519,13 +519,14 @@ def enter_dungeon_and_auto_hunt():
             i = 0
             while True:
                 if(image_exists_at_region('./images/nancheck.png', region)):
+                    isFailed1 = False
                     break
                 i += 1
                 if(i > 60):
-                    isFailed2 = True
+                    isFailed1 = True
                     break
                 time.sleep(1)
-        if(not isFailed2 and not isFailed1): 
+        if(not isFailed1): 
             while True:
                 click(coords["자동사냥"])
                 click(coords["순간이동"])
