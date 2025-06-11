@@ -613,9 +613,11 @@ def retrieve_and_equip_equipment():
         time.sleep(0.2)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
+    click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
     in_game_check()
     click(coords["장비창"])
+    time.sleep(1)
     click(coords["자동장착"])
     time.sleep(1)
     if(image_exists_at_region('./images/jangbeno1.png', region)):
@@ -646,6 +648,8 @@ def store_equipment():
         time.sleep(0.2)
     time.sleep(1)
     click(coords["창고보관버튼"])
+    click(coords["창고보관버튼"])
+    time.sleep(1)
     click(coords["메뉴"])
     in_game_check()
 
@@ -655,9 +659,12 @@ def retrieve_hunting_equipment():
         time.sleep(0.2)
     time.sleep(1)
     click(coords["창고꺼내기버튼"])
+    click(coords["창고꺼내기버튼"])
+    time.sleep(1)
     click(coords["메뉴"])
     in_game_check()
     click(coords["장비창"])
+    time.sleep(1)
     if(image_exists_at_region('./images/autose.png', region)):
         click(coords["자동장착"])
     click(coords["메뉴"])
