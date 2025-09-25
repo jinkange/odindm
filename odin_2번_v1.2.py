@@ -187,9 +187,9 @@ coords = {
     "메뉴-던전": (1721, 258),
     "정예던전": (1126, 77),
     "정예던전스크롤위치": (1275, 183),
-    "공허의유적": (1361, 296),
+    "공허의유적": (1140, 296),
     "공허의유적5단계": (1095, 239),
-    "난쟁이비밀통로": (1574, 270),
+    "난쟁이비밀통로": (1360, 270),
     "난쟁이비밀통로5단계": (1061, 243),
     "던전이동": (1815, 499),
     "던전이동확인팝업": (1474, 332),
@@ -216,7 +216,7 @@ coords = {
     ]
 }
 
-def image_exists_at_region(template_path, region, threshold=0.93):
+def image_exists_at_region(template_path, region, threshold=0.92):
     """
     template_path: 찾을 이미지 파일 경로
     region: (x, y, width, height)1281 631

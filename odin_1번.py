@@ -44,7 +44,7 @@ def wait_until_time():
     print(f"⏳ {target_time.strftime('%H:%M')}까지 대기 중...")
 
     while datetime.datetime.now() < target_time:
-        time.sleep(1)
+        time.sleep(2)
 
     print("✅ 시간 도달. 실행 시작")
 
@@ -93,7 +93,7 @@ def click_on_window(hwnd, rel_x, rel_y):
     abs_x = rect[0] + rel_x
     abs_y = rect[1] + rel_y
     win32gui.SetForegroundWindow(hwnd)
-    time.sleep(0.3)
+    time.sleep(0.5)
     pyautogui.click(abs_x, abs_y)
 
 def mouse_drag(start_x, start_y, end_x, end_y, duration=0.2):
@@ -231,7 +231,7 @@ def image_exists_at_region(template_path, region, threshold=0.93):
     max_val = np.max(result)
     print(f"{template_path}찾기 :{max_val}")
     return max_val >= threshold
-def click_if_image_found(template_path, region, threshold=0.9, delay=0.3):
+def click_if_image_found(template_path, region, threshold=0.9, delay=0.7):
     """
     특정 화면 영역(region)에서 이미지가 있으면 클릭
     :param template_path: 비교할 이미지 파일 경로
@@ -325,13 +325,13 @@ def main():
             if status == "N":
                 update_status('Y')
                 break
-            time.sleep(1)
+            time.sleep(2)
         print("작동 시작. 마우스 작동시 미동작.")
         wake_up_if_sleep_mode()
         click(coords["메뉴"])
         click(coords["메뉴"])
         # ensure_in_game_mode()
-        time.sleep(1)
+        time.sleep(2)
         while True:
             move_to_character_select_screen()
             if(move_to_character_slot(current_char_index)):
@@ -393,20 +393,20 @@ def main():
 def wake_up_if_sleep_mode():
     if(image_exists_at_region('./images/juljun.png', region)):
         mouse_drag(*coords["드레그시작"], *coords["드레그끝"])
-    time.sleep(1)
+    time.sleep(2)
 
 def ensure_in_game_mode():
     while True:
         if(image_exists_at_region('./images/ingame.png', region)):
             break
-        time.sleep(1)
+        time.sleep(2)
     
 def in_game_check():
     i = 0
     while True:
         if(image_exists_at_region('./images/ingame.png', region)):
             break
-        time.sleep(1)
+        time.sleep(2)
         i += 1
         if(i > 30):
             i = 0
@@ -419,7 +419,7 @@ def in_game_waiting():
     while True:
         if(image_exists_at_region('./images/ingame.png', region)):
             break
-        time.sleep(1)
+        time.sleep(2)
     
     click(coords["마을귀환"])
     click(coords["팝업확인"])
@@ -427,7 +427,7 @@ def in_game_waiting():
     while True:
         if(image_exists_at_region('./images/ingame.png', region)):
             break
-        time.sleep(1)
+        time.sleep(2)
         
 def move_to_character_select_screen():
     if(not image_exists_at_region('./images/menucheck.png', region)):
@@ -446,7 +446,7 @@ def move_to_character_slot(index):
         if(i > 60):
             isFailedCharacter = True
             break
-        time.sleep(1)
+        time.sleep(2)
         
     if(isFailedCharacter):
         print(f"캐릭터창 찾기 실패로 이동")    
@@ -462,8 +462,8 @@ def has_dungeon_time():
     click(coords["메뉴-던전"])
     click(coords["정예던전"])
     #마우스 스크롤 필요할수 있음
-    scroll_on_window(*coords["정예던전스크롤위치"], -1500)
-    time.sleep(1)
+    scroll_on_window(*coords["정예던전스크롤위치"], -3500)
+    time.sleep(2)
     
     if(not image_exists_at_region('./images/nanend.png', region)):
         click(coords["메뉴"])
@@ -479,7 +479,7 @@ def has_dungeon_time():
 
 def has_items():
     click(coords["장비창"])
-    time.sleep(1)
+    time.sleep(2)
     if(not image_exists_at_region('./images/jangbeno1.png', region)):
         click(coords["메뉴"])
         in_game_check()
@@ -499,12 +499,12 @@ def enter_dungeon_and_auto_hunt():
         if(not image_exists_at_region('./images/menucheck.png', region)):
             click(coords["메뉴"])
         click(coords["메뉴-던전"])
-        time.sleep(1)
+        time.sleep(2)
         if(image_exists_at_region('./images/isdungeon.png', region)):
             click(coords["정예던전"])
-            time.sleep(1)
-            scroll_on_window(*coords["정예던전스크롤위치"], -1500)
-            time.sleep(1)
+            time.sleep(2)
+            scroll_on_window(*coords["정예던전스크롤위치"], -3500)
+            time.sleep(2)
         else:
             click(coords["메뉴"])
             click(coords["메뉴"])
@@ -529,7 +529,7 @@ def enter_dungeon_and_auto_hunt():
                 if(i > 60):
                     isFailed1 = True
                     break
-                time.sleep(1)
+                time.sleep(2)
         elif(not image_exists_at_region('./images/gonghuend.png', region)):
             click(coords["공허의유적"])
             click(coords["공허의유적"])
@@ -546,7 +546,7 @@ def enter_dungeon_and_auto_hunt():
                 if(i > 60):
                     isFailed1 = True
                     break
-                time.sleep(1)
+                time.sleep(2)
         if(not isFailed1): 
             while True:
                 click(coords["자동사냥"])
@@ -554,7 +554,7 @@ def enter_dungeon_and_auto_hunt():
                 while True:
                     if(image_exists_at_region('./images/ingame.png', region)):
                         break
-                    time.sleep(1)
+                    time.sleep(2)
                     
                 click(coords["작은움직임"])
                 click(coords["절전모드"])
@@ -567,7 +567,7 @@ def enter_dungeon_and_auto_hunt():
                     if(i > 10):
                         isAutoPlay = True
                         break
-                    time.sleep(1)
+                    time.sleep(2)
                 #자동사냥중이아님
                 if(not isAutoPlay):
                     wake_up_if_sleep_mode()
@@ -602,23 +602,23 @@ def open_storage():
                 i = 0
                 isOpenStorage = False
                 break
-            time.sleep(1)
+            time.sleep(2)
         if(isOpenStorage):
             break
 
 def retrieve_and_equip_equipment():
     for pos in coords["창고아이템"]:
         pyautogui.click(*pos)
-        time.sleep(0.2)
-    time.sleep(1)
+        time.sleep(0.5)
+    time.sleep(2)
     click(coords["창고꺼내기버튼"])
     click(coords["창고꺼내기버튼"])
     click(coords["메뉴"])
     in_game_check()
     click(coords["장비창"])
-    time.sleep(1)
+    time.sleep(2)
     click(coords["자동장착"])
-    time.sleep(1)
+    time.sleep(2)
     if(image_exists_at_region('./images/jangbeno1.png', region)):
         click(coords["메뉴"])
         in_game_check()
@@ -644,26 +644,26 @@ def unequip_all():
 def store_equipment():
     for pos in coords["인벤토리아이템"]:
         pyautogui.click(*pos)
-        time.sleep(0.2)
-    time.sleep(1)
+        time.sleep(0.5)
+    time.sleep(2)
     click(coords["창고보관버튼"])
     click(coords["창고보관버튼"])
-    time.sleep(1)
+    time.sleep(2)
     click(coords["메뉴"])
     in_game_check()
 
 def retrieve_hunting_equipment():
     for pos in coords["창고아이템"]:
         pyautogui.click(*pos)
-        time.sleep(0.2)
-    time.sleep(1)
+        time.sleep(0.5)
+    time.sleep(2)
     click(coords["창고꺼내기버튼"])
     click(coords["창고꺼내기버튼"])
-    time.sleep(1)
+    time.sleep(2)
     click(coords["메뉴"])
     in_game_check()
     click(coords["장비창"])
-    time.sleep(1)
+    time.sleep(2)
     if(image_exists_at_region('./images/autose.png', region)):
         click(coords["자동장착"])
     click(coords["메뉴"])
@@ -679,7 +679,7 @@ def start_auto_hunt():
     while True:
         if(image_exists_at_region('./images/ingame.png', region)):
             break
-        time.sleep(1)
+        time.sleep(2)
     click(coords["자동사냥"])
 
 
@@ -692,7 +692,7 @@ def click(pos):
     print(f"클릭 위치: ({rand_x}, {rand_y})")  # 로그 출력
     pyautogui.moveTo(rand_x, rand_y)
     pyautogui.click()
-    time.sleep(1)
+    time.sleep(2)
     
 def wait(seconds):
     import time

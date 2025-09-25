@@ -187,9 +187,9 @@ coords = {
     "메뉴-던전": (1721, 258),
     "정예던전": (1126, 77),
     "정예던전스크롤위치": (1275, 183),
-    "공허의유적": (1361, 296),
+    "공허의유적": (1140, 296),
     "공허의유적5단계": (1095, 239),
-    "난쟁이비밀통로": (1574, 270),
+    "난쟁이비밀통로": (1360, 270),
     "난쟁이비밀통로5단계": (1061, 243),
     "던전이동": (1815, 499),
     "던전이동확인팝업": (1474, 332),
@@ -216,7 +216,7 @@ coords = {
     ]
 }
 
-def image_exists_at_region(template_path, region, threshold=0.93):
+def image_exists_at_region(template_path, region, threshold=0.92):
     """
     template_path: 찾을 이미지 파일 경로
     region: (x, y, width, height)1281 631
@@ -289,8 +289,10 @@ def enum_windows_by_title(title):
     return hwnds
 
 def move_resize_window(hwnd, x, y, width, height):
-    """창 위치와 크기 조절"""
-    win32gui.MoveWindow(hwnd, x, y, width, height, True)
+    if hwnd and isinstance(hwnd, int):  # hwnd가 int인지 확인
+        win32gui.MoveWindow(hwnd, x, y, width, height, True)
+    else:
+        print("Invalid hwnd:", hwnd)
 
 MAX_CHARACTERS = 5
 current_char_index = 0
@@ -306,6 +308,7 @@ def main():
         move_resize_window(odin_windows[1], 960, 0, 960, 540)# 2번
         move_resize_window(console_windows[0], 960, 550, 960, 200) #2번
         print("ODIN 창 위치 조정 완료")
+        print("창고제거버전")
     try:
         wait_until_time()
     except Exception as e:
@@ -341,48 +344,28 @@ def main():
         while isNext:
             if has_dungeon_time(): #3.1
             # if not has_dungeon_time(): #3.1 던전 시간있어도 없게 테스트
-                if has_items():
-                    while has_dungeon_time():
-                        enter_dungeon_and_auto_hunt()
-                        update_status('N')
-                        while not is_out_of_dungeon():
-                            wait(10)
-                        continue  # 던전 끝나면 다시 3.1로 돌아감
-                else:
-                    open_storage()
-                    if retrieve_and_equip_equipment():
-                        continue  # 다시 3.1로
-                    else:
-                        #아이템 없음 찾기실패 종료
-                        print("아이템 찾기 실패 종료")
-                        isFine = False
-                        break
-                
+                while has_dungeon_time():
+                    enter_dungeon_and_auto_hunt()
+                    update_status('N')
+                    while not is_out_of_dungeon():
+                        wait(10)
+                    continue  # 던전 끝나면 다시 3.1로 돌아감
             else:  # 던전 시간 없음
-                if has_items():
-                    return_to_town()
-                    unequip_all()
-                    open_storage()
-                    store_equipment()
-                    continue  # 다음 조건 확인 (3.2로)
+                if current_char_index < MAX_CHARACTERS:
+                    print("캐릭터 작업완료")
+                    update_status('N')
+                    isNext = False
+                    break
                 else:
-                    if current_char_index < MAX_CHARACTERS:
-                        print("캐릭터 작업완료")
-                        update_status('N')
-                        isNext = False
-                        break
-                    else:
-                        print("모든 캐릭터 작업완료")
-                        isDone = True
-                        break  # 모든 캐릭터 순회 완료
+                    print("모든 캐릭터 작업완료")
+                    isDone = True
+                    break  # 모든 캐릭터 순회 완료
     # 5번째 캐릭터까지 완료 후 루프
     if(isFine):
         while True:
             move_to_character_select_screen()
             if(move_to_character_slot(1)):
                 break
-        open_storage()
-        retrieve_hunting_equipment()
         move_to_hunting_spot()
         start_auto_hunt()
         
